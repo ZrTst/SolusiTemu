@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <meta charset="UTF-8">
+    <title>Log Masuk</title>
+    <link rel="stylesheet" href="../public/global.css">
+</head>
+
+<body>
+    <!--Header(Logo)-->
+    <div class="logo-container">
+        <div class="logo-image"></div>
+        <span class="logo-text">Syarikat SolusiTemu</span>
+        <a href="index.html" class="a1" style="position: absolute; right: 0%;">
+           ← Balik ke halaman pertama
+        </a>
+    </div>
+    <!--Left Decorative Cards Layer -->
+    <div class="grid-overlay">
+        <div class="card-layer layer-1"></div>
+        <div class="card-layer layer-2"></div>
+        <div class="card-layer layer-3">
+            <h1 class="label" style="font-size:30px; margin-left: 10%; text-align: left;">
+                ID Pengguna
+            </h1>
+            <h2 class="label" style="font-size: 20px; margin-left: 10%; text-align: left;margin-top: -10px;">
+                P001
+            </h2>
+            <h1 class="label" style="font-size: 30px; margin-left: 10%; text-align: left;margin-top: -10px;">
+                Nama Pengguna
+            </h1>
+            <h2 class="label" style="font-size: 20px; margin-left: 10%; text-align: left;margin-top: -10px;">
+                Ali
+            </h2>
+            <h1 class="label" style="font-size: 30px; margin-left: 10%; text-align: left;margin-top: -10px;">
+                Password Pengguna
+            </h1>
+            <h2 class="label" style="font-size: 20px; margin-left: 10%; text-align: left;margin-top: -10px;">
+                ********
+            </h2>
+        </div>
+    </div>
+    <!--Footer slogan-->
+    <div class="login-page-footer">
+        <p>
+            Janji Temu pantas. Perkhidmatan pantas.
+        </p>
+        <p style="color: #d9a441; margin-top: -4.167vh;">
+            bila-bila masa, di mana-mana sahaja.
+        </p>
+    </div>
+    <!--Login Form-->
+    <div class="verification-container">
+        <h1 class="font-oswald">Selamat kembali,</h1>
+        <h2 class="font-oswald" style="margin-top: -20px;">Pengguna yang dihormati</h2>
+        <form method="POST" action="">
+            <label class="label">ID Pengguna</label>
+            <div class="flex-row-box">
+                <select name="id_prefix" class="login-select" required>
+                    <option value="P">P</option>
+                    <option value="J">J</option>
+                    <option value="A">A</option>
+                </select>
+                <!--User ID: Role prefix(pelanggan, juruteknik, admin)-->
+                <div class="digit-container">
+                    <input type="text" name="userid_1" class="digit-input" maxlength="1" placeholder="0" pattern="[0-9]"
+                        inputmode="numeric" required autocomplete="off">
+                    <input type="text" name="userid_2" class="digit-input" maxlength="1" placeholder="0" pattern="[0-9]"
+                        inputmode="numeric" required autocomplete="off">
+                    <input type="text" name="userid_3" class="digit-input" maxlength="1" placeholder="1" pattern="[0-9]"
+                        inputmode="numeric" required autocomplete="off">
+                </div>
+            </div>
+            <!--Password container-->
+            <div class="password-wrapper">
+                <label class="label">Kata Laluan</label>
+                <input class="global-input" type="password" id="password" name="password" placeholder="1234" required>
+                <!--Password visibility toggle-->
+                <svg class="icons">
+                    <use href="../public/icons.svg#icon-eye-close"></use>
+                </svg>
+            </div>
+            <a href="forgotpasswd.html" class="a1">Lupa kata laluan?</a>
+            <button class="submit-btn" type="submit">Log Masuk</button>
+            <button class="guest-btn" type="button" onclick="location.href='guest.html'">Tetamu →</button>
+        </form>
+        <h4 style=" text-align: center;">Tiada akaun?
+            <a href="signup.html" class="a2">Daftar di sini</a>
+        </h4>
+    </div>
+    <script>
+        //Turn to next flex-row-box when entered a digit in the current flex-row-box
+        document.querySelectorAll('.digit-input').forEach((input, index, inputs) => {
+            input.addEventListener('input', (e) => {
+                if (input.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        //Change the password input become visible(computer version)
+        const passwordInput = document.getElementById('password');
+        const eyeIconSvg = document.querySelector('.password-wrapper .icons');
+        const eyeIconUse = eyeIconSvg.querySelector('use');
+
+        eyeIconSvg.addEventListener('mousedown', function () {
+            passwordInput.type = 'text';
+            eyeIconUse.setAttribute('href', '../public/icons.svg#icon-eye-open');
+        });
+
+        eyeIconSvg.addEventListener('mouseup', function () {
+            passwordInput.type = 'password';
+            eyeIconUse.setAttribute('href', '../public/icons.svg#icon-eye-close');
+        });
+
+        eyeIconSvg.addEventListener('mouseleave', function () {
+            passwordInput.type = 'password';
+            eyeIconUse.setAttribute('href', '../public/icons.svg#icon-eye-close');
+        });
+
+        //Change the password input become visible(mobile version)
+            eyeIconSvg.addEventListener('touchstart', function (e) {
+            //Prevent default mobile behaviors (long-press text selection/magnifying glass)
+            e.preventDefault();
+            passwordInput.type = 'text';
+            eyeIconUse.setAttribute('href', '../public/icons.svg#icon-eye-open');
+        });
+
+        eyeIconSvg.addEventListener('touchend', function () {
+            passwordInput.type = 'password';
+            eyeIconUse.setAttribute('href', '../public/icons.svg#icon-eye-close');
+        });
+
+
+    </script>
+</body>
+
+</html>

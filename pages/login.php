@@ -1,41 +1,71 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    header("Location: login.php");
+    exit;
+}
 require_once __DIR__ . '/../private_core/config.php';
 require_once __DIR__ . '/../private_core/functions.php';
 
 $error = '';
+$login_method = 'id';
 $id_prefix = 'P';
 $userid_1 = '';
 $userid_2 = '';
 $userid_3 = '';
+$username_input = '';
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    $id_prefix = isset($_POST['id_prefix']) ? trim($_POST['id_prefix']) : 'P';
-    $userid_1 = isset($_POST['userid_1']) ? trim($_POST['userid_1']) : '';
-    $userid_2 = isset($_POST['userid_2']) ? trim($_POST['userid_2']) : '';
-    $userid_3 = isset($_POST['userid_3']) ? trim($_POST['userid_3']) : '';
-    $password = isset($_POST['password']) ? trim($_POST['password']) : '';
+    $login_method   = isset($_POST['login_method']) ? trim($_POST['login_method']) : 'id';
+    $password       = isset($_POST['password']) ? trim($_POST['password']) : '';
+    $user           = false;
 
-    $user_id = strtoupper($id_prefix . $userid_1 . $userid_2 . $userid_3);
+    if ($login_method === 'id') {
+        // ======= Method Login : ID =======
+        $id_prefix = isset($_POST['id_prefix']) ? trim($_POST['id_prefix']) : 'P';
+        $userid_1  = isset($_POST['userid_1']) ? trim($_POST['userid_1']) : '';
+        $userid_2  = isset($_POST['userid_2']) ? trim($_POST['userid_2']) : '';
+        $userid_3  = isset($_POST['userid_3']) ? trim($_POST['userid_3']) : '';
 
-    if ($userid_1 === '' || $userid_2 === '' || $userid_3 === '' || $password === '') {
-        $error = "Sila lengkapkan semua maklumat ID Pengguna dan Kata Laluan.";
+        if ($userid_1 === '' || $userid_2 === '' || $userid_3 === '' || $password === '') {
+            $error = "Sila lengkapkan ID Pengguna dan Kata Laluan.";
+        } else {
+            $user_id = strtoupper($id_prefix . $userid_1 . $userid_2 . $userid_3);
+            $user = db_getUserById($pdo, $user_id);
+        }
     } else {
-        $user = db_getUserById($pdo, $user_id);
+        // ======= Method Login : Username =======
+        $username_input = isset($_POST['username_input']) ? trim($_POST['username_input']) : '';
 
+        if ($username_input === '' || $password === '') {
+            $error = "Sila lengkapkan Nama Pengguna dan Kata Laluan.";
+        } else {
+            $user = db_getUserByName($pdo, $username_input);
+        }
+    }
+
+    if (empty($error)) {
         if ($user && db_verifyPassword($user, $password)) {
-            //Session management
+            //Get the user ID
+            $user_id = $user['ID_P'] ?? $user['ID_J'] ?? '';
+            $prefix = strtoupper(substr($user_id, 0, 1));
+
+            // Session management
             $_SESSION['user_id'] = $user_id;
             $_SESSION['logged_in'] = true;
-            $_SESSION['role'] = ($id_prefix === 'P') ? 'pelanggan' : (($id_prefix === 'A') ? 'admin' : 'juruteknik');
-            $_SESSION['nama'] = $user['Nama_Penuh'] ?? $user['nama_penuh'] ?? $user['nama'] ?? '';
+            $_SESSION['role'] = ($prefix === 'P') ? 'pelanggan' : (($prefix === 'A') ? 'admin' : 'juruteknik');
+            $_SESSION['nama'] = $user['Nama_P'] ?? $user['Nama_S'] ?? $user['Nama_Penuh'] ?? $user['nama'] ?? '';
             $_SESSION['user_data'] = $user;
 
-            //Page after login successfully
+            // Page after login successfully
             header("Location: janjitemu.php");
             exit;
         } else {
-            $error = "ID Pengguna atau Kata Laluan tidak sah.";
+            $error = ($login_method === 'id') 
+                ? "ID Pengguna atau Kata Laluan tidak sah." 
+                : "Nama Pengguna atau Kata Laluan tidak sah.";
         }
     }
 }
@@ -114,12 +144,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         <?php endif; ?>
 
         <form method="POST" action="login.php">
-            <input type="hidden" id="login-method" name="login_method" value="id">
+            <input type="hidden" id="login-method" name="login_method" value="<?= htmlspecialchars($login_method) ?>">
             <!--Switch Login method button-->
             <div class="login-tabs" style="display: flex; gap: 15px; margin-bottom: 10px;">
+                <!--ID method-->
                 <button type="button" id="btn-id-login" class="active-tab" onclick="switchLoginMethod('id')"
                     style="background: none; border: none; color: #d4af37; cursor: pointer; border-bottom: 2px solid #d4af37; padding-bottom: 5px;">Guna
                     ID</button>
+                <!--Name method-->
                 <button type="button" id="btn-name-login" onclick="switchLoginMethod('name')"
                     style="background: none; border: none; color: #888; cursor: pointer; padding-bottom: 5px;">Guna
                     Nama</button>
@@ -127,7 +159,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             <div id="name-input-group" style="display: none;">
                 <label class="label">Nama Pengguna</label>
                 <input type="text" id="username-input-field" name="username_input"
-                    placeholder="Masukkan Nama Pengguna Anda" class="global-input">
+                    placeholder="Masukkan Nama Pengguna Anda" class="global-input"
+                    value="<?= htmlspecialchars($username_input) ?>">
             </div>
 
             <div id="id-input-group" style="display: block;">
@@ -237,7 +270,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             const nameInputField = document.getElementById('username-input-field');
             const idInputs = document.querySelectorAll('#id-input-group input, #id-input-group select');
 
-            if (!idInputGroup || !nameInputGroup) return;
+            if (!idInputGroup || !nameInputGroup) 
+                return;
+            if (methodInput) {
+                methodInput.value = method;
+            }
             if (method === 'id') {
                 idInputGroup.style.display = 'block';
                 nameInputGroup.style.display = 'none';
@@ -247,7 +284,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 btnIdLogin.style.borderBottom = '2px solid #d4af37';
                 btnIdLogin.style.paddingBottom = '5px';
                 btnNameLogin.style.color = '#888';
-                btnNameLogin.style.borderBottom = 'none'
+                btnNameLogin.style.borderBottom = 'none';
                 btnNameLogin.style.paddingBottom = '5px';
             } else {
                 idInputGroup.style.display = 'none';
@@ -262,6 +299,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 btnIdLogin.style.paddingBottom = '5px';
             }
         }
+
+        // Restore active tab after form submission
+        <?php if ($login_method === 'name'): ?>
+        switchLoginMethod('name');
+        <?php endif; ?>
     </script>
 </body>
 

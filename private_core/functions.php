@@ -3,8 +3,6 @@
 //$sql= SQL query statement
 //$stmt= statement
 
-
-
 //function get user info by id
 function db_getUserById($pdo, $id){
     //Match ID format (P: Pelanggan, J: Juruteknik, A: Admin)
@@ -36,7 +34,35 @@ function db_getUserById($pdo, $id){
 
     } catch (PDOException $e) {
         error_log("Database query failed: " . $e->getMessage());
-        return false;     }
+        return false;     
+    }
+}
+
+//function get user info by name
+function db_getUserByName($pdo, $name){
+    //Check if the name is empty or not
+    if (empty(trim($name))) {
+        return false;
+    }
+    try {
+        //Check if the name exists in PELANGGAN table
+        $sql = "SELECT * FROM `PELANGGAN` WHERE `Nama_P`= ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$name]);
+        $user = $stmt->fetch();
+        if ($user) {
+            return $user;
+        }
+        //Check if the name exists in STAF table
+        $sql = "SELECT * FROM `STAF` WHERE `Nama_S`= ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$name]);
+        return $stmt->fetch();
+
+    } catch (PDOException $e) {
+        error_log("Database query failed in db_getUserByName: " . $e->getMessage());
+        return false;
+    }
 }
 
 // Function to verify password
@@ -52,5 +78,7 @@ function db_verifyPassword($user, $password) {
     if (password_verify($password, $stored_password)) {
         return true;
     }
+    return false;
 }
+
 ?>

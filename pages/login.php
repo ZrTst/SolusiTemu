@@ -56,7 +56,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $_SESSION['user_id'] = $user_id;
             $_SESSION['logged_in'] = true;
             $_SESSION['role'] = ($prefix === 'P') ? 'pelanggan' : (($prefix === 'A') ? 'admin' : 'juruteknik');
-            $_SESSION['nama'] = $user['Nama_P'] ?? $user['Nama_S'] ?? $user['Nama_Penuh'] ?? $user['nama'] ?? '';
+            $_SESSION['nama'] = $user['Nama_P'] ?? $user['Nama_S'] ?? '';
             $_SESSION['user_data'] = $user;
 
             // Page after login successfully

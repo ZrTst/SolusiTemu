@@ -1,0 +1,3 @@
+# When 404 error occur
+ErrorDocument 404 /solusitemu/pages/errors/404.php
+

@@ -2,8 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: login.php");
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+    header("Location: dashboard.php");
     exit;
 }
 require_once __DIR__ . '/../private_core/config.php';
@@ -60,12 +60,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $_SESSION['user_data'] = $user;
 
             // Page after login successfully
-            header("Location: janjitemu.php");
+            header("Location: dashboard.php");
             exit;
         } else {
-            $error = ($login_method === 'id') 
-                ? "ID Pengguna atau Kata Laluan tidak sah." 
-                : "Nama Pengguna atau Kata Laluan tidak sah.";
+            $error = ($login_method === 'id') ? "ID Pengguna atau Kata Laluan tidak sah." : "Nama Pengguna atau Kata Laluan tidak sah.";
         }
     }
 }

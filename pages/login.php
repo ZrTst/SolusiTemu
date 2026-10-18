@@ -2,12 +2,13 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+if (($_SESSION['logged_in'] ?? false) == true) {
     header("Location: dashboard.php");
     exit;
 }
 require_once __DIR__ . '/../private_core/config.php';
 require_once __DIR__ . '/../private_core/functions.php';
+
 
 $error = '';
 $login_method = 'id';

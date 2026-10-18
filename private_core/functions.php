@@ -81,4 +81,15 @@ function db_verifyPassword($user, $password) {
     return false;
 }
 
+//Function to destroy session and logout
+function db_destroySession(){
+    if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+//Clear all the data inside the session array
+$_SESSION = array();
+
+session_destroy();
+}
+
 ?>

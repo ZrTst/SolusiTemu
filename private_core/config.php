@@ -1,8 +1,5 @@
 <?php
 //private_core/config.php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 $host = 'localhost';
 $db = 'solusitemu';
 $user ='root';

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>401 Tidak Dibenarkan</title>
+
+</head>
+
+<body style="display: flex; justify-content: center; align-items: center;">
+    <div class="error-container">
+        <h1 class="font-oswald">Berhenti! 401 Tidak Dibenarkan</h1>
+        <h3 style="width: 100%;word-break: break-word;">Anda belum log masuk; Sila log masuk untuk melihat kandungan
+            ini.</h3>
+        <a href="index.php" style="text-decoration: none">
+            <button class="btn">Kembali ke halaman pertama</button>
+        </a>
+        <a href="login.php" class="a1" style="text-decoration: none;">Log Masuk</a>
+    </div>
+</body>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Oswald');
+
+    :root {
+        --bg: #0c0c0d;
+        --panel: #141416;
+        --panel-raised: #1b1b1e;
+        --border: #474747;
+        --border-soft: #252525;
+        --text: #e7e9eb;
+        --text-dim: #94908a;
+        --text-faint: #5c5852;
+        --gold: #d9a441;
+        --gold-bright: #f0c369;
+        --gold-dim: #5c4a24;
+        --icon: #607d8b;
+        --icon-active: #2196f3;
+        --btn-hover: #fcd88a;
+    }
+
+    body {
+        height: 100vh;
+        min-height: 100%;
+        background-color: var(--bg);
+        font-family: sans-serif;
+        overflow: hidden;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .font-oswald {
+        font-family: "Oswald", sans-serif;
+        letter-spacing: 0.05em;
+    }
+
+    .error-container {
+        position: relative;
+        display: flex;
+        min-width: 600px;
+        flex-direction: column;
+        border-radius: 10px;
+        width: 40vw;
+        height: 40vh;
+        background: var(--panel);
+        justify-content: center;
+        border: 3px solid var(--gold);
+        color: var(--text-dim);
+        text-align: center;
+        line-height: 1.6;
+        padding: 40px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        width: 25%;
+        min-width: 250px;
+        padding: 10px 15px;
+        background-color: var(--panel-raised);
+        border: 1px solid var(--gold-dim);
+        color: var(--text-dim);
+        padding: 10px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 10px;
+        border: 3px solid var(--gold-dim);
+        cursor: pointer;
+        box-shadow:
+            0 0 10px rgba(217, 164, 65, 0.2),
+            0 0 25px rgba(240, 195, 105, 0.1);
+        transition: all 0.2s ease;
+
+    }
+
+    .btn:hover {
+        border-color: var(--btn-hover);
+    }
+
+    a.a1 {
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        bottom: 20px;
+        left: 20px;
+        color: #888888;
+        font-family: "Oswald", sans-serif;
+    }
+
+    a.a1:hover {
+        color: #a4a4a4;
+    }
+</style>
+
+</html>

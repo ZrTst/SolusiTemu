@@ -22,6 +22,7 @@
 }
 
 body { 
+    height: 100vh;
     min-height: 100%;
     background-color: var(--bg); 
     font-family: sans-serif; 
@@ -505,4 +506,16 @@ button.guest-btn:active{transform:translateY(1px);}
         left: 0;
     }
     
+}
+
+/**Error pages design*/
+.error-container{
+    display: flex;
+    width: 40vw;
+    height: 40vh;
+    background: var(--panel);
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--gold-bright);
+    color: var(--text-dim);
 }

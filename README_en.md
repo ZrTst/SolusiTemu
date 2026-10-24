@@ -51,9 +51,9 @@ Every time a user submits form data, the data flow is processed through 3 phases
 - [x] Automatic Session management based on ID prefixes (P/A/J).
 
 ### 📐 Phase 2: Dashboard Layout & Router 
-- [ ] Implementation of Flexbox layout (Fixed Left Sidebar, Flexible Right Main Content).
-- [ ] Nested `if-else` + `switch-case` structures inside `dashboard.php`.
-- [ ] Setting up `pages/sub_pages/` and `pages/api/` folders.
+- [x] Implementation of Flexbox layout (Fixed Left Sidebar, Flexible Right Main Content).
+- [x] Nested `if-else` + `switch-case` structures inside `dashboard.php`.
+- [x] Setting up `pages/sub_pages/` and `pages/api/` folders.
 
 ### 💾 Phase 3: Core Business Logic (CRUD Operations)
 - [ ] Add New Appointment Form (Customer).

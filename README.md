@@ -51,9 +51,9 @@ Setiap kali pengguna menghantar data borang (Form Submission), aliran data dipro
 - [x] Pengurusan Session automatik berdasarkan prefix ID (P/A/J).
 
 ### 📐 Fasa 2: Layout Dashboard & Router 
-- [ ] Implementasi susun atur Flexbox (Kiri Fixed Sidebar, Kanan Flex Main Content).
-- [ ] Struktur nested `if-else` + `switch-case` di dalam `dashboard.php`.
-- [ ] Menyediakan folder `pages/sub_pages/` dan `pages/api/`.
+- [x] Implementasi susun atur Flexbox (Kiri Fixed Sidebar, Kanan Flex Main Content).
+- [x] Struktur nested `if-else` + `switch-case` di dalam `dashboard.php`.
+- [x] Menyediakan folder `pages/sub_pages/` dan `pages/api/`.
 
 ### 💾 Fasa 3: Logik Perniagaan Teras (CRUD Operations)
 - [ ] Borang Tambah Janjitemu Baharu (Pelanggan).

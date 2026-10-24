@@ -1,10 +1,9 @@
-<?php 
+<?php
 //private_core/functions.php
-//$sql= SQL query statement
-//$stmt= statement
 
 //function get user info by id
-function db_getUserById($pdo, $id){
+function db_getUserById($pdo, $id)
+{
     //Match ID format (P: Pelanggan, J: Juruteknik, A: Admin)
     if (!preg_match('/^[PJA]\d{3}$/i', $id)) {
         return false;
@@ -17,7 +16,7 @@ function db_getUserById($pdo, $id){
     if ($prefix === 'P') {
         $tablename = 'PELANGGAN';
         $idtype = 'ID_P';
-    } elseif ($prefix === 'J' || $prefix === 'A' ) {
+    } elseif ($prefix === 'J' || $prefix === 'A') {
         $tablename = 'STAF';
         $idtype = 'ID_J';
     } else {
@@ -34,12 +33,13 @@ function db_getUserById($pdo, $id){
 
     } catch (PDOException $e) {
         error_log("Database query failed: " . $e->getMessage());
-        return false;     
+        return false;
     }
 }
 
 //function get user info by name
-function db_getUserByName($pdo, $name){
+function db_getUserByName($pdo, $name)
+{
     //Check if the name is empty or not
     if (empty(trim($name))) {
         return false;
@@ -66,7 +66,8 @@ function db_getUserByName($pdo, $name){
 }
 
 // Function to verify password
-function db_verifyPassword($user, $password) {
+function db_verifyPassword($user, $password)
+{
     if (!$user) {
         return false;
     }
@@ -82,14 +83,31 @@ function db_verifyPassword($user, $password) {
 }
 
 //Function to destroy session and logout
-function db_destroySession(){
+function db_destroySession()
+{
     if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-//Clear all the data inside the session array
-$_SESSION = array();
+        session_start();
+    }
+    //Clear all the data inside the session array
+    $_SESSION = array();
 
-session_destroy();
+    //Delete session in server
+    session_destroy();
+
+    //Delete cookie that include session(PHPSESSID) in user's browser
+    $sessionName = session_name();
+    if (isset($_COOKIE[$sessionName])) {
+        setcookie(
+            //Session name
+            $sessionName,
+            //Change $sessionName become empty string
+            '',
+            //Let the cookie expire
+            time() - 42000,
+            //At directory '/' (Whole website)
+            '/'
+        );
+    }
 }
 
 ?>

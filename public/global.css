@@ -24,6 +24,7 @@
 }
 
 body {
+    display: flex;
     height: 100vh;
     min-height: 100%;
     background-color: var(--bg);
@@ -338,9 +339,7 @@ button.guest-btn:active {
 
 /** Dashboard page sidebar */
 .sidebar-container {
-    position: fixed;
-    top: 20px;
-    left: 20px;
+    margin: 20px 0 20px 20px;
     width: 300px;
     height: calc(100vh - 40px);
     background-color: var(--panel);
@@ -354,6 +353,7 @@ button.guest-btn:active {
     transition: width 0.3s ease;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
 }
 
 .sidebar-container h2.font-oswald {
@@ -459,36 +459,18 @@ button.guest-btn:active {
     font-size: 22px;
 }
 
-/* Sidebar collapsed state */
-.sidebar-container.collapsed {
-    top: -10px;
-    left: 0;
-    background: transparent;
-    border: transparent;
-    width: max-content;
-    height: max-content;
-    overflow: hidden;
+.main-content {
+    flex: 1;
+    background-color: var(--panel);
+    color: var(--text);
+    border: 2px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 30px 20px;
+    z-index: 1000;
+    margin: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
-
-.sidebar-container.collapsed .logo-text-wrapper,
-.sidebar-container.collapsed .logo-text,
-.sidebar-container.collapsed .logo-image,
-.sidebar-container.collapsed h2.font-oswald,
-.sidebar-container.collapsed .sidebar-vertical-btn-group,
-.sidebar-container.collapsed .btn-text {
-    display: none;
-}
-
-.sidebar-container.collapsed .logo-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: auto;
-    height: auto;
-    margin: 0;
-    padding: 0;
-}
-
 
 /** For mobile view*/
 @media (max-width: 768px) {
@@ -526,17 +508,6 @@ button.guest-btn:active {
     .sidebar-container .logo-image,
     .sidebar-container .logo-text {
         display: flex !important;
-    }
-
-    .sidebar-container.collapsed .logo-image,
-    .sidebar-container.collapsed .logo-text-wrapper,
-    .sidebar-container.collapsed .logout-btn {
-        display: none !important;
-    }
-
-    .sidebar-container.collapsed {
-        top: -10px;
-        left: 0;
     }
 
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once __DIR__ . '/../private_core/config.php';
 require_once __DIR__ . '/../private_core/functions.php';
 

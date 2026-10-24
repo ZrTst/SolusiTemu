@@ -6,12 +6,14 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     //For someone who haven't login and unauthorized 
     http_response_code(401);
     //Pull the page 401.html without changing URL
-    include($_SERVER['DOCUMENT_ROOT'] . "/SolusiTemu/pages/errors/401.html");
+    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
     exit;
 }
 require_once __DIR__ . '/../private_core/config.php';
 require_once __DIR__ . '/../private_core/functions.php';
 
+$role = $_SESSION['role'] ?? 'pelanggan';
+$page = $_GET['page'] ?? 'home';
 
 ?>
 
@@ -33,19 +35,45 @@ require_once __DIR__ . '/../private_core/functions.php';
                 <span class="logo-text">Syarikat</span>
                 <span class="logo-text">SolusiTemu</span>
             </div>
-            <svg class="icons" id="icon-menu">
-                <use href="../public/icons.svg#icon-menu-active"></use>
-            </svg>
         </div>
+
         <h2 class="font-oswald">Pengguna yang dihormati,</h2>
         <h2 class="font-oswald">
-            <?= htmlspecialchars($_SESSION['nama']) ?>
+            <?= htmlspecialchars($_SESSION['name']) ?>
         </h2>
         <div class="sidebar-vertical-btn-group">
-            <button class="sidebar-vertical-btn"><span class="btn-text">Janjitemu</span></button>
-            <button class="sidebar-vertical-btn"><span class="btn-text">Perkhidmatan</span></button>
-            <button class="sidebar-vertical-btn"><span class="btn-text">Juruteknik</span></button>
-            <button class="sidebar-vertical-btn"><span class="btn-text">Profil</span></button>
+            <?php if ($role === 'admin'): ?>
+                <a href="dashboard.php?page=janjitemu_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
+                    <span>Janjitemu</span></a>
+                <a href="dashboard.php?page=perkhidmatan_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
+                    <span>Perkhidmatan</span></a>
+                <a href="dashboard.php?page=pengguna_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
+                    <span>Pengguna</span></a>
+                <a href="dashboard.php?page=laporan_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
+                    <span>Laporan</span></a>
+                <a href="dashboard.php?page=import_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
+                    <span>Import</span></a>
+            <?php elseif ($role === 'juruteknik'): ?>
+                <a href="dashboard.php?page=janjitemu_juruteknik" class="sidebar-vertical-btn"
+                    style="text-decoration: none;">
+                    <span>Janjitemu</span></a>
+                <a href="dashboard.php?page=perkhidmatan_pengguna" class="sidebar-vertical-btn"
+                    style="text-decoration: none;">
+                    <span>Perkhidmatan</span></a>
+                <a href="dashboard.php?page=profil" class="sidebar-vertical-btn" style="text-decoration: none;">
+                    <span>Profil</span></a>
+            <?php else: ?>
+                <a href="dashboard.php?page=janjitemu_pelanggan" class="sidebar-vertical-btn"
+                    style="text-decoration: none;">
+                    <span>Janjitemu</span></a>
+                <a href="dashboard.php?page=perkhidmatan_pengguna" class="sidebar-vertical-btn"
+                    style="text-decoration: none;">
+                    <span>Perkhidmatan</span></a>
+                <a href="dashboard.php?page=juruteknik" class="sidebar-vertical-btn" style="text-decoration: none;">
+                    <span>Juruteknik</span></a>
+                <a href="dashboard.php?page=profil" class="sidebar-vertical-btn" style="text-decoration: none;">
+                    <span>Profil</span></a>
+            <?php endif; ?>
             <a href="logout.php" style="text-decoration: none">
                 <button id="logout-btn" class="logout-btn">Log Keluar
                     <svg class="icons">
@@ -55,24 +83,65 @@ require_once __DIR__ . '/../private_core/functions.php';
             </a>
         </div>
     </nav>
-    <script>
-        //Sidebar functions collapsed
-        const menuIcon = document.getElementById('icon-menu');
-        const useTag = menuIcon.querySelector('use');
-        const sidebarContainer = document.querySelector('.sidebar-container');
-        const sidebarHeader = sidebarContainer.querySelector('h2');
-        const sidebarButtons = document.querySelectorAll('.sidebar-vertical-btn');
-
-        menuIcon.addEventListener('click', function () {
-            const currentHref = useTag.getAttribute('href');
-            if (currentHref === '../public/icons.svg#icon-menu-active') {
-                sidebarContainer.classList.toggle("collapsed");
-                useTag.setAttribute('href', '../public/icons.svg#icon-menu-inactive');
-            } else {
-                useTag.setAttribute('href', '../public/icons.svg#icon-menu-active');
-                sidebarContainer.classList.remove("collapsed");
+    <main class="main-content">
+        <?php
+        if ($role === 'admin'):
+            switch ($page) {
+                case 'janjitemu_admin':
+                    require_once __DIR__ . '/sub_pages/janjitemu_admin.php';
+                    break;
+                case 'perkhidmatan_admin':
+                    require_once __DIR__ . '/sub_pages/perkhidmatan_admin.php';
+                    break;
+                case 'pengguna_admin':
+                    require_once __DIR__ . '/sub_pages/pengguna_admin.php';
+                    break;
+                case 'laporan_admin':
+                    require_once __DIR__ . '/sub_pages/laporan_admin.php';
+                    break;
+                case 'import_admin':
+                    require_once __DIR__ . '/sub_pages/import_admin.php';
+                    break;
+                default:
+                    require_once __DIR__ . '/sub_pages/home.php';
+                    break;
             }
-        });
-
+        elseif ($role === 'juruteknik'):
+            switch ($page) {
+                case 'janjitemu_juruteknik':
+                    require_once __DIR__ . '/sub_pages/janjitemu_juruteknik.php';
+                    break;
+                case 'perkhidmatan_pengguna':
+                    require_once __DIR__ . '/sub_pages/perkhidmatan_pengguna.php';
+                    break;
+                case 'profil':
+                    require_once __DIR__ . '/sub_pages/profil.php';
+                    break;
+                default:
+                    require_once __DIR__ . '/sub_pages/home.php';
+                    break;
+            }
+        else:
+            switch ($page) {
+                case 'janjitemu_pelanggan':
+                    require_once __DIR__ . '/sub_pages/janjitemu_pelanggan.php';
+                    break;
+                case 'perkhidmatan_pengguna':
+                    require_once __DIR__ . '/sub_pages/perkhidmatan_pengguna.php';
+                    break;
+                case 'juruteknik':
+                    require_once __DIR__ . '/sub_pages/juruteknik.php';
+                    break;
+                case 'profil':
+                    require_once __DIR__ . '/sub_pages/profil.php';
+                    break;
+                default:
+                    require_once __DIR__ . '/sub_pages/home.php';
+                    break;
+            }
+        endif;
+        ?>
+    </main>
+    <script>
     </script>
 </body>

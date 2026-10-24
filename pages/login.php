@@ -19,16 +19,17 @@ $userid_3 = '';
 $username_input = '';
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    $login_method   = isset($_POST['login_method']) ? trim($_POST['login_method']) : 'id';
-    $password       = isset($_POST['password']) ? trim($_POST['password']) : '';
-    $user           = false;
+    //Get the login method from POST (name = "login_method")
+    $login_method = isset($_POST['login_method']) ? trim($_POST['login_method']) : 'id';
+    $password = isset($_POST['password']) ? trim($_POST['password']) : '';
+    $user = false;
 
     if ($login_method === 'id') {
         // ======= Method Login : ID =======
         $id_prefix = isset($_POST['id_prefix']) ? trim($_POST['id_prefix']) : 'P';
-        $userid_1  = isset($_POST['userid_1']) ? trim($_POST['userid_1']) : '';
-        $userid_2  = isset($_POST['userid_2']) ? trim($_POST['userid_2']) : '';
-        $userid_3  = isset($_POST['userid_3']) ? trim($_POST['userid_3']) : '';
+        $userid_1 = isset($_POST['userid_1']) ? trim($_POST['userid_1']) : '';
+        $userid_2 = isset($_POST['userid_2']) ? trim($_POST['userid_2']) : '';
+        $userid_3 = isset($_POST['userid_3']) ? trim($_POST['userid_3']) : '';
 
         if ($userid_1 === '' || $userid_2 === '' || $userid_3 === '' || $password === '') {
             $error = "Sila lengkapkan ID Pengguna dan Kata Laluan.";
@@ -51,13 +52,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         if ($user && db_verifyPassword($user, $password)) {
             //Get the user ID
             $user_id = $user['ID_P'] ?? $user['ID_J'] ?? '';
-            $prefix = strtoupper(substr($user_id, 0, 1));
+            $prefix = strtoupper($user_id[0]);
 
             // Session management
             $_SESSION['user_id'] = $user_id;
             $_SESSION['logged_in'] = true;
             $_SESSION['role'] = ($prefix === 'P') ? 'pelanggan' : (($prefix === 'A') ? 'admin' : 'juruteknik');
-            $_SESSION['nama'] = $user['Nama_P'] ?? $user['Nama_S'] ?? '';
+            $_SESSION['name'] = $user['Nama_P'] ?? $user['Nama_S'] ?? '';
             $_SESSION['user_data'] = $user;
 
             // Page after login successfully
@@ -147,7 +148,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             <!--Switch Login method button-->
             <div class="login-tabs" style="display: flex; gap: 15px; margin-bottom: 10px;">
                 <!--ID method-->
-                <button type="button" id="btn-id-login" class="active-tab" onclick="switchLoginMethod('id')"
+                <button type="button" id="btn-id-login" onclick="switchLoginMethod('id')"
                     style="background: none; border: none; color: #d4af37; cursor: pointer; border-bottom: 2px solid #d4af37; padding-bottom: 5px;">Guna
                     ID</button>
                 <!--Name method-->
@@ -155,13 +156,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     style="background: none; border: none; color: #888; cursor: pointer; padding-bottom: 5px;">Guna
                     Nama</button>
             </div>
+            <!--For Name method login use-->
             <div id="name-input-group" style="display: none;">
                 <label class="label">Nama Pengguna</label>
                 <input type="text" id="username-input-field" name="username_input"
                     placeholder="Masukkan Nama Pengguna Anda" class="global-input"
                     value="<?= htmlspecialchars($username_input) ?>">
             </div>
-
+            <!--For ID method login use-->
             <div id="id-input-group" style="display: block;">
                 <label class="label">ID Pengguna</label>
                 <div class="flex-row-box">
@@ -269,7 +271,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             const nameInputField = document.getElementById('username-input-field');
             const idInputs = document.querySelectorAll('#id-input-group input, #id-input-group select');
 
-            if (!idInputGroup || !nameInputGroup) 
+            if (!idInputGroup || !nameInputGroup)
                 return;
             if (methodInput) {
                 methodInput.value = method;
@@ -301,7 +303,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
         // Restore active tab after form submission
         <?php if ($login_method === 'name'): ?>
-        switchLoginMethod('name');
+            switchLoginMethod('name');
         <?php endif; ?>
     </script>
 </body>

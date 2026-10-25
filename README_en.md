@@ -54,6 +54,7 @@ Every time a user submits form data, the data flow is processed through 3 phases
 - [x] Implementation of Flexbox layout (Fixed Left Sidebar, Flexible Right Main Content).
 - [x] Nested `if-else` + `switch-case` structures inside `dashboard.php`.
 - [x] Setting up `pages/sub_pages/` and `pages/api/` folders.
+- [x] New user account registration functionality.
 
 ### 💾 Phase 3: Core Business Logic (CRUD Operations)
 - [ ] Add New Appointment Form (Customer).

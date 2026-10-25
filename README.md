@@ -54,6 +54,7 @@ Setiap kali pengguna menghantar data borang (Form Submission), aliran data dipro
 - [x] Implementasi susun atur Flexbox (Kiri Fixed Sidebar, Kanan Flex Main Content).
 - [x] Struktur nested `if-else` + `switch-case` di dalam `dashboard.php`.
 - [x] Menyediakan folder `pages/sub_pages/` dan `pages/api/`.
+- [x] Fungsi pendaftaran akaun pengguna baharu.
 
 ### 💾 Fasa 3: Logik Perniagaan Teras (CRUD Operations)
 - [ ] Borang Tambah Janjitemu Baharu (Pelanggan).

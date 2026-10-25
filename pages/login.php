@@ -17,55 +17,63 @@ $userid_1 = '';
 $userid_2 = '';
 $userid_3 = '';
 $username_input = '';
+$signup_username = isset($_POST['name-signup']) ? trim($_POST['name-signup']) : '';
+$signup_status = $_SESSION['status'] ?? null;
+// Flash session
+unset($_SESSION['status']);
+$show_signup = in_array($signup_status, ['NameUsed', 'InvalidUsername', 'DatabaseError', 'InvalidInput', 'WeakPassword'], true);
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    //Get the login method from POST (name = "login_method")
-    $login_method = isset($_POST['login_method']) ? trim($_POST['login_method']) : 'id';
-    $password = isset($_POST['password']) ? trim($_POST['password']) : '';
-    $user = false;
+    $signup_action = isset($_POST['signup']) ? trim($_POST['signup']) : 'inactive';
+    if ($signup_action !== 'active') {
+        //Get the login method from POST (name = "login_method")
+        $login_method = isset($_POST['login_method']) ? trim($_POST['login_method']) : 'id';
+        $password = isset($_POST['password']) ? trim($_POST['password']) : '';
+        $user = false;
 
-    if ($login_method === 'id') {
-        // ======= Method Login : ID =======
-        $id_prefix = isset($_POST['id_prefix']) ? trim($_POST['id_prefix']) : 'P';
-        $userid_1 = isset($_POST['userid_1']) ? trim($_POST['userid_1']) : '';
-        $userid_2 = isset($_POST['userid_2']) ? trim($_POST['userid_2']) : '';
-        $userid_3 = isset($_POST['userid_3']) ? trim($_POST['userid_3']) : '';
+        if ($login_method === 'id') {
+            // ======= Method Login : ID =======
+            $id_prefix = isset($_POST['id_prefix']) ? trim($_POST['id_prefix']) : 'P';
+            $userid_1 = isset($_POST['userid_1']) ? trim($_POST['userid_1']) : '';
+            $userid_2 = isset($_POST['userid_2']) ? trim($_POST['userid_2']) : '';
+            $userid_3 = isset($_POST['userid_3']) ? trim($_POST['userid_3']) : '';
 
-        if ($userid_1 === '' || $userid_2 === '' || $userid_3 === '' || $password === '') {
-            $error = "Sila lengkapkan ID Pengguna dan Kata Laluan.";
+            if ($userid_1 === '' || $userid_2 === '' || $userid_3 === '' || $password === '') {
+                $error = "Sila lengkapkan ID Pengguna dan Kata Laluan.";
+            } else {
+                $user_id = strtoupper($id_prefix . $userid_1 . $userid_2 . $userid_3);
+                $user = db_getUserById($pdo, $user_id);
+            }
         } else {
-            $user_id = strtoupper($id_prefix . $userid_1 . $userid_2 . $userid_3);
-            $user = db_getUserById($pdo, $user_id);
+            // ======= Method Login : Username =======
+            $username_input = isset($_POST['username_input']) ? trim($_POST['username_input']) : '';
+
+            if ($username_input === '' || $password === '') {
+                $error = "Sila lengkapkan Nama Pengguna dan Kata Laluan.";
+            } else {
+                $user = db_getUserByName($pdo, $username_input);
+            }
         }
-    } else {
-        // ======= Method Login : Username =======
-        $username_input = isset($_POST['username_input']) ? trim($_POST['username_input']) : '';
 
-        if ($username_input === '' || $password === '') {
-            $error = "Sila lengkapkan Nama Pengguna dan Kata Laluan.";
-        } else {
-            $user = db_getUserByName($pdo, $username_input);
-        }
-    }
+        if (empty($error)) {
+            if ($user && db_verifyPassword($user, $password)) {
+                //Get the user ID
+                $user_id = $user['ID_P'] ?? $user['ID_S'] ?? '';
+                $prefix = strtoupper($user_id[0]);
 
-    if (empty($error)) {
-        if ($user && db_verifyPassword($user, $password)) {
-            //Get the user ID
-            $user_id = $user['ID_P'] ?? $user['ID_J'] ?? '';
-            $prefix = strtoupper($user_id[0]);
+                // Session management
+                $_SESSION['user_id'] = $user_id;
+                $_SESSION['logged_in'] = true;
+                $_SESSION['role'] = ($prefix === 'P') ? 'pelanggan' : (($prefix === 'A') ? 'admin' : 'juruteknik');
+                $_SESSION['name'] = $user['Nama_P'] ?? $user['Nama_S'] ?? '';
+                $_SESSION['user_data'] = $user;
 
-            // Session management
-            $_SESSION['user_id'] = $user_id;
-            $_SESSION['logged_in'] = true;
-            $_SESSION['role'] = ($prefix === 'P') ? 'pelanggan' : (($prefix === 'A') ? 'admin' : 'juruteknik');
-            $_SESSION['name'] = $user['Nama_P'] ?? $user['Nama_S'] ?? '';
-            $_SESSION['user_data'] = $user;
-
-            // Page after login successfully
-            header("Location: dashboard.php");
-            exit;
-        } else {
-            $error = ($login_method === 'id') ? "ID Pengguna atau Kata Laluan tidak sah." : "Nama Pengguna atau Kata Laluan tidak sah.";
+                // Page after login successfully
+                header("Location: dashboard.php");
+                exit;
+            } else {
+                $error = ($login_method === 'id') ? "ID Pengguna atau Kata Laluan tidak sah." : "Nama Pengguna atau Kata Laluan tidak sah.";
+            }
         }
     }
 }
@@ -78,6 +86,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     <meta charset="UTF-8">
     <title>Log Masuk</title>
     <link rel="stylesheet" href="../public/global.css">
+    <link rel="stylesheet" href="../public/css/login.css">
 </head>
 
 <body>
@@ -129,15 +138,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         <h2 class="font-oswald" style="margin-top: -20px;">Pengguna yang dihormati</h2>
 
         <?php if (!empty($error)): ?>
-            <div id="error-box" style="
-                background-color: rgba(220, 53, 69, 0.15); 
-                border: 1px solid rgba(220, 53, 69, 0.4); 
-                color: #ff7675; padding: 10px 14px; 
-                border-radius: 10px; 
-                margin-bottom: 15px; 
-                font-size: 14px; 
-                text-align: center; 
-                font-family: sans-serif;">
+            <div class="error-box">
                 <!--Prevent XSS attacks-->
                 <?= htmlspecialchars($error) ?>
             </div>
@@ -160,7 +161,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             <div id="name-input-group" style="display: none;">
                 <label class="label">Nama Pengguna</label>
                 <input type="text" id="username-input-field" name="username_input"
-                    placeholder="Masukkan Nama Pengguna Anda" class="global-input"
+                    placeholder="Masukkan Nama Pengguna Anda" class="global-input" autocomplete="off"
                     value="<?= htmlspecialchars($username_input) ?>">
             </div>
             <!--For ID method login use-->
@@ -198,11 +199,62 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             <a href="forgotpasswd.php" class="a1">Lupa kata laluan?</a>
             <button class="submit-btn" type="submit">Log Masuk</button>
             <button class="guest-btn" type="button" onclick="location.href='guest.php'">Tetamu →</button>
+            <h4 style=" text-align: center;">Tiada akaun?
+                <button class="signup-btn" id="signup" name="signup" value="inactive" type="button">
+                    Daftar di sini</button>
+            </h4>
         </form>
-        <h4 style=" text-align: center;">Tiada akaun?
-            <a href="signup.php" class="a2">Daftar di sini</a>
-        </h4>
     </div>
+
+    <div class="signup-overlay" id="signup-form" style="display: <?= $show_signup ? 'flex' : 'none' ?>;">
+        <div class="signup-container">
+            <div class="signup-header font-oswald" style="font-size: 40px;">
+                <span>Daftar Akaun Baharu</span>
+                <svg class="icons" id="minimizeicon">
+                    <use href="../public/icons.svg#minimize-icon"></use>
+                </svg>
+            </div>
+            <form method="POST" action="api/signup.php">
+                <input type="hidden" name="status" value="registering">
+                <input type="hidden" name="signup" value="active">
+                <!-- Name container -->
+                <div class="name-wrapper">
+                    <label class="label">Nama</label>
+                    <input class="  global-input" type="text" id="name-signup" name="name-signup"
+                        placeholder="Masukkan nama penuh anda" autocomplete="off" required>
+                </div>
+                <?php if ($signup_status === 'NameUsed'): ?>
+                    <div class="error-box">Nama telah digunakan.</div>
+                <?php elseif ($signup_status === 'InvalidUsername' || $signup_status === 'InvalidInput'): ?>
+                    <div class="error-box">Sila masukkan nama dan kata laluan yang sah.</div>
+                <?php elseif ($signup_status === 'DatabaseError'): ?>
+                    <div class="error-box">Ralat pangkalan data. Sila cuba sebentar lagi.</div>
+                <?php elseif ($signup_status === 'RegisterSuccess'): ?>
+
+                <?php endif; ?>
+                <!--Password container-->
+                <div class="password-wrapper">
+                    <label class="label">Kata Laluan</label>
+                    <input class="global-input" type="password" id="password-signup" name="password-signup"
+                        placeholder="Minima 8 aksara" required>
+                </div>
+                <div id="weak-pass-error" class="error-box" style="display: none;">Kata laluan mesti mengandungi huruf
+                    besar, huruf kecil,
+                    nombor dan minima 8 aksara.</div>
+                <div class="password-wrapper">
+                    <label class="label">Sahkan Kata Laluan</label>
+                    <input class="global-input" id="confirm-pass" type="password"
+                        placeholder="Masukkan semula kata laluan" required>
+                </div>
+                <div class="error-box" id="pass-error" style="display: none;">
+                    Kata laluan tidak sepadan
+                </div>
+                <button class="submit-btn" type="submit">Daftar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScripts -->
     <script>
         //Turn to next flex-row-box when entered a digit in the current flex-row-box
         document.querySelectorAll('.digit-input').forEach((input, index, inputs) => {
@@ -252,25 +304,28 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         });
 
         //Hide the error message after 3 senconds
-        const errorBox = document.getElementById('error-box');
-        if (errorBox) {
+        const errorBoxes = document.querySelectorAll('.error-box');
+        if (errorBoxes) {
             setTimeout(() => {
-                errorBox.style.transition = "opacity 0.5s ease";
-                errorBox.style.opacity = 0;
-                setTimeout(() => errorBox.style.display = 'none', 500);
+                errorBoxes.forEach(box => {
+                    box.style.transition = "opacity 0.5 ease";
+                    box.style.opacity = 0;
+                    setTimeout(() =>
+                        box.style.display = 'none', 500);
+                });
             }, 3000);
         }
 
         //Switch login method(id or name)
-        function switchLoginMethod(method) {
-            const idInputGroup = document.getElementById('id-input-group');
-            const nameInputGroup = document.getElementById('name-input-group');
-            const btnIdLogin = document.getElementById('btn-id-login');
-            const btnNameLogin = document.getElementById('btn-name-login');
-            const methodInput = document.getElementById('login-method');
-            const nameInputField = document.getElementById('username-input-field');
-            const idInputs = document.querySelectorAll('#id-input-group input, #id-input-group select');
+        const idInputGroup = document.getElementById('id-input-group');
+        const nameInputGroup = document.getElementById('name-input-group');
+        const btnIdLogin = document.getElementById('btn-id-login');
+        const btnNameLogin = document.getElementById('btn-name-login');
+        const methodInput = document.getElementById('login-method');
+        const nameInputField = document.getElementById('username-input-field');
+        const idInputs = document.querySelectorAll('#id-input-group input, #id-input-group select');
 
+        function switchLoginMethod(method) {
             if (!idInputGroup || !nameInputGroup)
                 return;
             if (methodInput) {
@@ -300,6 +355,85 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 btnIdLogin.style.paddingBottom = '5px';
             }
         }
+
+        // Display & Hide the signup container
+        const SignupForm = document.getElementById('signup-form');
+        const MinimizeIcon = document.getElementById('minimizeicon');
+        const SignupBtn = document.getElementById('signup');
+
+        if (SignupBtn && SignupForm) {
+            SignupBtn.addEventListener("click", function () {
+                SignupForm.style.display = 'flex';
+            });
+        }
+        if (MinimizeIcon && SignupForm) {
+            MinimizeIcon.addEventListener('click', function () {
+                SignupForm.style.display = 'none';
+            });
+        }
+
+        //Let all the required form = false
+        SignupBtn.addEventListener("click", function () {
+            nameInputField.required = false;
+            idInputs.forEach(input => input.required = false);
+            passwordInput.required = false;
+            SignupBtn.value = 'active';
+            if (SignupForm) {
+                SignupForm.style.display = 'flex';
+            }
+        });
+
+        //Function to verify password strength
+        function isPasswordStrong(password) {
+            const hasUpperCase = /[A-Z]/.test(password); // Check uppercase letters existance
+            const hasLowerCase = /[a-z]/.test(password); // Check lowercase letters existance
+            const hasNumber = /[0-9]/.test(password);    // Check number existence
+            const isLongEnough = password.length >= 8;   // Check password length
+
+            return hasUpperCase && hasLowerCase && hasNumber && isLongEnough;
+        }
+
+        //Confirm password re-type correctly
+        const registerPass = document.getElementById('password-signup');
+        const confirmPass = document.getElementById('confirm-pass');
+        const passErrorMsg = document.getElementById('pass-error');
+        const weakPassErrorMsg = document.getElementById('weak-pass-error');
+        const registerForm = document.querySelector('#signup-form form');
+        const nameSignup = document.getElementById('name-signup');
+
+        registerForm.addEventListener('submit', (e) => {
+            const pswd = registerPass.value;
+            const confirmPswd = confirmPass.value;
+
+            if (!isPasswordStrong(pswd)) {
+                e.preventDefault(); // Stop form submission
+                weakPassErrorMsg.style.display = 'block';
+                weakPassErrorMsg.style.opacity = 1;
+                weakPassErrorMsg.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => {
+                    weakPassErrorMsg.style.transition = "opacity 0.5s ease";
+                    weakPassErrorMsg.style.opacity = 0;
+                    setTimeout(() => {
+                        weakPassErrorMsg.style.display = 'none';
+                    }, 500);
+                }, 3000);
+                return;
+            }
+            if (pswd !== confirmPswd) {
+                e.preventDefault(); // Stop form submission
+                passErrorMsg.style.display = 'block';
+                passErrorMsg.style.opacity = 1;
+                passErrorMsg.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => {
+                    passErrorMsg.style.transition = "opacity 0.5s ease";
+                    passErrorMsg.style.opacity = 0;
+                    setTimeout(() => {
+                        passErrorMsg.style.display = 'none';
+                    }, 500);
+                }, 3000);
+                return;
+            }
+        });
 
         // Restore active tab after form submission
         <?php if ($login_method === 'name'): ?>

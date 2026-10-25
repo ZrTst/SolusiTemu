@@ -18,7 +18,7 @@ function db_getUserById($pdo, $id)
         $idtype = 'ID_P';
     } elseif ($prefix === 'J' || $prefix === 'A') {
         $tablename = 'STAF';
-        $idtype = 'ID_J';
+        $idtype = 'ID_S';
     } else {
         return false; //Prevent invalid input
     }
@@ -40,6 +40,7 @@ function db_getUserById($pdo, $id)
 //function get user info by name
 function db_getUserByName($pdo, $name)
 {
+
     //Check if the name is empty or not
     if (empty(trim($name))) {
         return false;
@@ -53,6 +54,7 @@ function db_getUserByName($pdo, $name)
         if ($user) {
             return $user;
         }
+
         //Check if the name exists in STAF table
         $sql = "SELECT * FROM `STAF` WHERE `Nama_S`= ?";
         $stmt = $pdo->prepare($sql);
@@ -110,4 +112,71 @@ function db_destroySession()
     }
 }
 
+function db_checkName($pdo, $name)
+{
+    //Check if the name is empty or not
+    if (empty(trim($name))) {
+        return 'invalid';
+    }
+    try {
+        //Check if the name exists in PELANGGAN table
+        $sql = "SELECT 1 FROM `PELANGGAN` WHERE `Nama_P` = ?
+                UNION ALL
+                SELECT 1 FROM `STAF` WHERE `Nama_S` = ?
+                LIMIT 1";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$name, $name]);
+        $user = $stmt->fetch();
+        if ($user) {
+            return true;
+        }
+        return false;
+
+    } catch (PDOException $e) {
+        error_log("Database query failed in db_checkName: " . $e->getMessage());
+        return 'error';
+    }
+}
+
+function db_insertData($pdo, $name, $password)
+{
+    //Check if the name of password is empty or not
+    if (trim($name) === '' || trim($password) === '') {
+        return 'invalid';
+    }
+    try {
+        // ===== Step 1 : Auto-incrementing User ID =====
+        $stmtCheckId = $pdo->query("SELECT ID_P FROM PELANGGAN ORDER BY ID_P DESC LIMIT 1");
+        $lastRow = $stmtCheckId->fetch();
+
+        if ($lastRow) {
+            $lastId = $lastRow['ID_P'];
+            $numberId = substr($lastId, 1);
+            $nextNumber = (int) $numberId + 1;
+            $newId = 'P' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        } else {
+            $newId = 'P001';
+        }
+        // ===== Step 2 : Hash Encryption =====
+        // == Step 2(a) : Check the strength of the password ==
+        // Pattern analyze
+        //(?=.*[a-z]) = Must contain a-z
+        //(?=.*[A-Z]) = Must contain A-Z
+        //(?=.*[0-9]) = Must contain 0-9
+        //{8, } = Must be at least 8 characters long
+        $passwordPattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/';
+        if (!preg_match($passwordPattern, $password)) {
+            return 'weakpass';
+        }
+        $hashed_pass = password_hash($password, PASSWORD_DEFAULT);
+        // ===== Step 3 : Insert data into the database =====
+        $sql = "INSERT INTO PELANGGAN (ID_P, Nama_P, Pswd_P) VALUES (?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $success = $stmt->execute([$newId, $name, $hashed_pass]);
+        return $success;
+    } catch (PDOException $e) {
+        error_log("Fail insert date into database at db_insertData: " . $e->getMessage());
+        return false;
+    }
+}
 ?>

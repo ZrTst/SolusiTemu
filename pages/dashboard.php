@@ -25,6 +25,7 @@ $page = $_GET['page'] ?? 'home';
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <link rel="stylesheet" href="../public/global.css">
+    <link rel="stylesheet" href="../public/css/dashboard.css">
 </head>
 
 <body>

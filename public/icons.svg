@@ -25,7 +25,8 @@
   </symbol>
 
   <!-- arrow-bar-to-left -->
-  <symbol id="arrow-bar-to-left" viewBox="0 0 24 24" fill="none" stroke="#607d8b" stroke-width="1" stroke-linecap="round"
+  <symbol id="arrow-bar-to-left" viewBox="0 0 24 24" fill="none" stroke="#607d8b" stroke-width="1"
+    stroke-linecap="round"
     stroke-linejoin="round">
     <path d="M10 12l10 0" />
     <path d="M10 12l4 4" />
@@ -33,25 +34,25 @@
     <path d="M4 4l0 16" />
   </symbol>
 
-  <!-- Menu icon.inactive-->
-  <symbol id="icon-menu-inactive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4 6l16 0" />
-    <path d="M4 12l16 0" />
-    <path d="M4 18l16 0" />
-  </symbol>
-
-  <!-- Menu icon.active -->
-  <symbol id="icon-menu-active" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4 6h16" />
-    <path d="M7 12h13" />
-    <path d="M10 18h10" />
-  </symbol>
-
   <!-- Log out icon-->
-  <symbol id="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+    stroke-linecap="round" stroke-linejoin="round">
     <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
     <path d="M9 12h12l-3 -3" />
     <path d="M18 15l3 -3" />
-  </symbol>  
+  </symbol>
+
+  <!-- Minimize icon -->
+  <symbol id="minimize-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 9l4 0l0 -4" />
+    <path d="M3 3l6 6" />
+    <path d="M5 15l4 0l0 4" />
+    <path d="M3 21l6 -6" />
+    <path d="M19 9l-4 0l0 -4" />
+    <path d="M15 9l6 -6" />
+    <path d="M19 15l-4 0l0 4" />
+    <path d="M15 15l6 6" />
+  </symbol>
 
 </svg>

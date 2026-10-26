@@ -70,18 +70,13 @@ function db_getUserByName($pdo, $name)
 // Function to verify password
 function db_verifyPassword($user, $password)
 {
-    if (!$user) {
+    $dummy_hash = '$2y$10$abcdefghijklmnopqrstuvwxyzaaaaaaaaaaaaaaaaaaaaa'; //Random hashed string
+    $stored_password = $user['Pswd_P'] ?? $user['Pswd_S'] ?? $dummy_hash;
+    $is_match = password_verify($password, $stored_password);
+    if (empty($user) || (!isset($user['Pswd_P']) && !isset($user['Pswd_S']))) {
         return false;
     }
-    // Check possible password column names
-    $stored_password = $user['Pswd_P'] ?? $user['Pswd_S'] ?? null;
-    if ($stored_password === null) {
-        return false;
-    }
-    if (password_verify($password, $stored_password)) {
-        return true;
-    }
-    return false;
+    return $is_match;
 }
 
 //Function to destroy session and logout

@@ -46,10 +46,12 @@ function db_getUserByName($pdo, $name)
         return false;
     }
     try {
-        //Check if the name exists in PELANGGAN table
-        $sql = "SELECT * FROM `PELANGGAN` WHERE `Nama_P`= ?";
+        //Check if the name exists in PELANGGAN and STAF table
+        $sql = "SELECT * FROM `PELANGGAN` WHERE `Nama_P`= ?
+                UNION ALL
+                SELECT * FROM `STAF` WHERE `Nama_S` = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$name]);
+        $stmt->execute([$name, $name]);
         $user = $stmt->fetch();
         if ($user) {
             return $user;

@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald');
 @import url('https://fonts.googleapis.com/css2?family=Arimo');
 
+/* align - vertical
+   justify - horizontal */
+
 *,
 *::before,
 *::after {
@@ -14,6 +17,7 @@
     --border: #474747;
     --border-soft: #252525;
     --text: #e7e9eb;
+    --text-caramel: #1a1100;
     --text-dim: #94908a;
     --text-faint: #5c5852;
     --gold: #d9a441;

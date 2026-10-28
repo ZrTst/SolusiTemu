@@ -26,6 +26,8 @@ $page = $_GET['page'] ?? 'home';
     <title>Dashboard</title>
     <link rel="stylesheet" href="../public/global.css">
     <link rel="stylesheet" href="../public/css/dashboard.css">
+    <link rel="stylesheet" href="../public/css/home.css">
+    <link rel="stylesheet" href="../public/css/profile.css">
 </head>
 
 <body>
@@ -38,7 +40,13 @@ $page = $_GET['page'] ?? 'home';
             </div>
         </div>
 
-        <h2 class="font-oswald">Pengguna yang dihormati,</h2>
+        <?php if ($role === 'admin'): ?>
+            <h2 class="font-oswald">Pentadbir tertinggi,</h2>
+        <?php elseif ($role === 'juruteknik'): ?>
+            <h2 class="font-oswald">Pakar teknikal teras,</h2>
+        <?php else: ?>
+            <h2 class="font-oswald">Pengguna yang dihormati,</h2>
+        <?php endif; ?>
         <h2 class="font-oswald">
             <?= htmlspecialchars($_SESSION['name']) ?>
         </h2>

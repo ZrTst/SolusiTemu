@@ -56,13 +56,6 @@ function db_getUserByName($pdo, $name)
         if ($user) {
             return $user;
         }
-
-        //Check if the name exists in STAF table
-        $sql = "SELECT * FROM `STAF` WHERE `Nama_S`= ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$name]);
-        return $stmt->fetch();
-
     } catch (PDOException $e) {
         error_log("Database query failed in db_getUserByName: " . $e->getMessage());
         return false;
@@ -77,6 +70,10 @@ function db_verifyPassword($user, $password)
     $is_match = password_verify($password, $stored_password);
     if (empty($user) || (!isset($user['Pswd_P']) && !isset($user['Pswd_S']))) {
         return false;
+    }
+    if ($is_match) {
+        unset($user['Pswd_P']); // Delete password in $user array
+        unset($user['Pswd_S']);
     }
     return $is_match;
 }
@@ -109,6 +106,7 @@ function db_destroySession()
     }
 }
 
+// Function to check for duplicate names
 function db_checkName($pdo, $name)
 {
     //Check if the name is empty or not
@@ -135,6 +133,7 @@ function db_checkName($pdo, $name)
     }
 }
 
+//Function to insert new user into database
 function db_insertData($pdo, $name, $password)
 {
     //Check if the name of password is empty or not
@@ -142,8 +141,9 @@ function db_insertData($pdo, $name, $password)
         return 'invalid';
     }
     try {
+        $pdo->beginTransaction(); //To prevent Id duplicate when more then one people register together
         // ===== Step 1 : Auto-incrementing User ID =====
-        $stmtCheckId = $pdo->query("SELECT ID_P FROM PELANGGAN ORDER BY ID_P DESC LIMIT 1");
+        $stmtCheckId = $pdo->query("SELECT ID_P FROM PELANGGAN ORDER BY ID_P DESC LIMIT 1 FOR UPDATE");
         $lastRow = $stmtCheckId->fetch();
 
         if ($lastRow) {
@@ -172,7 +172,10 @@ function db_insertData($pdo, $name, $password)
         $success = $stmt->execute([$newId, $name, $hashed_pass]);
         return $success;
     } catch (PDOException $e) {
-        error_log("Fail insert date into database at db_insertData: " . $e->getMessage());
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack(); // Undo operation
+        }
+        error_log("Fail insert data into database at db_insertData: " . $e->getMessage());
         return false;
     }
 }

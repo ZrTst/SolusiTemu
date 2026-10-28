@@ -1,0 +1,58 @@
+/* Home page */
+.msg-container {
+    position: relative;
+    grid-column: 2;
+    display: flex;
+    min-width: 600px;
+    flex-direction: column;
+    border-radius: 16px;
+    width: 40vw;
+    height: 40vh;
+    background: var(--panel);
+    justify-content: center;
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 1px var(--border);
+    color: var(--text);
+    text-align: center;
+    line-height: 1.6;
+    padding: 40px 40px;
+    margin: 40px;
+    padding: 20px;
+}
+
+.btn {
+    width: max-content;
+    padding: 10px 15px;
+    background-color: var(--gold);
+    color: var(--text-caramel);
+    padding: 10px 36px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 2px solid var(--gold-dim);
+    cursor: pointer;
+    box-shadow:
+        0 0 10px rgba(217, 164, 65, 0.2),
+        0 0 25px rgba(240, 195, 105, 0.1);
+    transition: all 0.2s ease;
+    margin-top: 20px;
+}
+
+.btn:hover {
+    border-color: var(--gold-dim);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(226, 168, 59, 0.3);
+}
+
+.msg-container .logo-container {
+    position: static;
+    display: flex;
+    background-color: transparent;
+    overflow: hidden;
+    gap: 12px;
+}
+
+.msg-container .logo-text {
+    font-family: "Oswald", sans-serif;
+    font-size: 1.5rem;
+}

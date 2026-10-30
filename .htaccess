@@ -10,4 +10,7 @@ ErrorDocument 403 /SolusiTemu/pages/errors/403.html
 # When 404 error occur(Not found)
 ErrorDocument 404 /SolusiTemu/pages/errors/404.html
 
+# Prevent indexes view
+Options -Indexes
+
 

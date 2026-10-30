@@ -42,20 +42,20 @@ function db_getUserByName($pdo, $name)
 {
 
     //Check if the name is empty or not
-    if (empty(trim($name))) {
+    if ($name === null || trim($name) === '') {
         return false;
     }
+
     try {
         //Check if the name exists in PELANGGAN and STAF table
-        $sql = "SELECT * FROM `PELANGGAN` WHERE `Nama_P`= ?
+        $sql = "SELECT `ID_P`, `Nama_P`, `Pswd_P`, `Alamat` FROM `PELANGGAN` 
+                WHERE `Nama_P` = ?
                 UNION ALL
-                SELECT * FROM `STAF` WHERE `Nama_S` = ?";
+                SELECT `ID_S`, `Nama_S`, `Pswd_S`, `Peranan` FROM `STAF` 
+                WHERE `Nama_S` = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$name, $name]);
-        $user = $stmt->fetch();
-        if ($user) {
-            return $user;
-        }
+        return $stmt->fetch();
     } catch (PDOException $e) {
         error_log("Database query failed in db_getUserByName: " . $e->getMessage());
         return false;
@@ -115,9 +115,9 @@ function db_checkName($pdo, $name)
     }
     try {
         //Check if the name exists in PELANGGAN table
-        $sql = "SELECT 1 FROM `PELANGGAN` WHERE `Nama_P` = ?
+        $sql = "SELECT 1 FROM `pelanggan` WHERE `Nama_P` = ?
                 UNION ALL
-                SELECT 1 FROM `STAF` WHERE `Nama_S` = ?
+                SELECT 1 FROM `staf` WHERE `Nama_S` = ?
                 LIMIT 1";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$name, $name]);
@@ -142,8 +142,9 @@ function db_insertData($pdo, $name, $password)
     }
     try {
         $pdo->beginTransaction(); //To prevent Id duplicate when more then one people register together
+
         // ===== Step 1 : Auto-incrementing User ID =====
-        $stmtCheckId = $pdo->query("SELECT ID_P FROM PELANGGAN ORDER BY ID_P DESC LIMIT 1 FOR UPDATE");
+        $stmtCheckId = $pdo->query("SELECT ID_P FROM `pelanggan` ORDER BY ID_P DESC LIMIT 1 FOR UPDATE");
         $lastRow = $stmtCheckId->fetch();
 
         if ($lastRow) {
@@ -154,6 +155,7 @@ function db_insertData($pdo, $name, $password)
         } else {
             $newId = 'P001';
         }
+
         // ===== Step 2 : Hash Encryption =====
         // == Step 2(a) : Check the strength of the password ==
         // Pattern analyze
@@ -165,11 +167,17 @@ function db_insertData($pdo, $name, $password)
         if (!preg_match($passwordPattern, $password)) {
             return 'weakpass';
         }
+
+        // == Step 2(b) : Hash the password
         $hashed_pass = password_hash($password, PASSWORD_DEFAULT);
+
         // ===== Step 3 : Insert data into the database =====
-        $sql = "INSERT INTO PELANGGAN (ID_P, Nama_P, Pswd_P) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO `pelanggan` (`ID_P`, `Nama_P`, `Pswd_P`) VALUES (?,?,?)";
         $stmt = $pdo->prepare($sql);
         $success = $stmt->execute([$newId, $name, $hashed_pass]);
+        if ($success) {
+            $pdo->commit();
+        }
         return $success;
     } catch (PDOException $e) {
         if ($pdo->inTransaction()) {
@@ -177,6 +185,57 @@ function db_insertData($pdo, $name, $password)
         }
         error_log("Fail insert data into database at db_insertData: " . $e->getMessage());
         return false;
+    }
+}
+
+function db_updateData($pdo, $userId, $dataType, $dataChange)
+{
+    $trimUserId = trim($userId);
+    $trimDataChange = trim($dataChange);
+    $trimDbColumn = trim($dataType);
+
+    if (empty($trimUserId) || empty($trimDataChange) || empty($trimDbColumn)) {
+        return 'invalid';
+    }
+    if (!preg_match('/^[PJA]\d{3}$/i', $trimUserId)) {
+        return false;
+    }
+
+    $prefix = strtoupper(substr($trimUserId, 0, 1));
+    //Match the prefix with corresponding table
+    if ($prefix === 'P') {
+        $tablename = 'PELANGGAN';
+        $idtype = 'ID_P';
+        $allowedColumns = ['Nama_P', 'Pswd_P', 'No_Tel_P', 'Alamat'];
+    } elseif ($prefix === 'J' || $prefix === 'A') {
+        $tablename = 'STAF';
+        $idtype = 'ID_S';
+        $allowedColumns = ['Nama_S', 'Pswd_S', 'No_Tel_S'];
+    } else {
+        return false; //Prevent invalid input
+    }
+
+    // Prevent changing something not allowed e.g User ID, Role 
+    if (!in_array($trimDbColumn, $allowedColumns))
+        return 'invalid';
+
+    // If the user data wanted to change is password
+    if ($trimDbColumn === 'Pswd_P' || $trimDbColumn === 'Pswd_S') {
+        $trimDataChange = password_hash($trimDataChange, PASSWORD_DEFAULT);
+    }
+
+    try {
+        $sql = "UPDATE `$tablename` SET `$trimDbColumn` = ? WHERE `$tablename`.`$idtype` = ?";
+        $stmt = $pdo->prepare($sql);
+        $success = $stmt->execute([$trimDataChange, $trimUserId]);
+        if ($success) {
+            return true;
+        }
+        return false;
+
+    } catch (PDOException $e) {
+        error_log("Database query failed in db_updateData: " . $e->getMessage());
+        return 'error';
     }
 }
 ?>

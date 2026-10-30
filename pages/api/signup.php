@@ -1,6 +1,6 @@
 <?php
 // api/signup.php
-//Insert data from user into the database
+// Insert data from user into the database
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

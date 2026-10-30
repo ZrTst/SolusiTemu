@@ -19,8 +19,9 @@ $userid_3 = '';
 $username_input = '';
 $signup_username = isset($_POST['name-signup']) ? trim($_POST['name-signup']) : '';
 $signup_status = $_SESSION['status'] ?? null;
-// Flash session
+// Flash session (Undifine $_SESSION['status'] to prevent status duplicate)
 unset($_SESSION['status']);
+// Only error occurs will display sign-up container
 $show_signup = in_array($signup_status, ['NameUsed', 'InvalidUsername', 'DatabaseError', 'InvalidInput', 'WeakPassword'], true);
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
@@ -144,6 +145,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             </div>
         <?php endif; ?>
 
+        <!-- SERVER(back to login.php) will get login_method, username_input, id_prefix, userid_1, userid_2, userid_3, password, signup -->
         <form method="POST" action="login.php">
             <input type="hidden" id="login-method" name="login_method" value="<?= htmlspecialchars($login_method) ?>">
             <!--Switch Login method button-->
@@ -208,21 +210,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
     <div class="signup-overlay" id="signup-form" style="display: <?= $show_signup ? 'flex' : 'none' ?>;">
         <div class="signup-container">
-            <div class="signup-header font-oswald" style="font-size: 40px;">
+            <div class="form-header font-oswald" style="font-size: 40px;">
                 <span>Daftar Akaun Baharu</span>
                 <svg class="icons" id="minimizeicon">
                     <use href="../public/icons.svg#minimize-icon"></use>
                 </svg>
             </div>
+            <!-- SERVER(go to api/signup.php) will get status, signup, name-signup, password-signup -->
             <form method="POST" action="api/signup.php">
                 <input type="hidden" name="status" value="registering">
                 <input type="hidden" name="signup" value="active">
                 <!-- Name container -->
-                <div class="name-wrapper">
-                    <label class="label">Nama</label>
-                    <input class="  global-input" type="text" id="name-signup" name="name-signup"
-                        placeholder="Masukkan nama penuh anda" autocomplete="off" required>
-                </div>
+                <label class="label">Nama</label>
+                <input class="global-input" type="text" id="name-signup" name="name-signup"
+                    placeholder="Masukkan nama penuh anda" autocomplete="off" required>
                 <?php if ($signup_status === 'NameUsed'): ?>
                     <div class="error-box">Nama telah digunakan.</div>
                 <?php elseif ($signup_status === 'InvalidUsername' || $signup_status === 'InvalidInput'): ?>
@@ -233,19 +234,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
                 <?php endif; ?>
                 <!--Password container-->
-                <div class="password-wrapper">
-                    <label class="label">Kata Laluan</label>
-                    <input class="global-input" type="password" id="password-signup" name="password-signup"
-                        placeholder="Minima 8 aksara" required>
-                </div>
+                <label class="label">Kata Laluan</label>
+                <input class="global-input" type="password" id="password-signup" name="password-signup"
+                    placeholder="Minima 8 aksara" required>
                 <div id="weak-pass-error" class="error-box" style="display: none;">Kata laluan mesti mengandungi huruf
                     besar, huruf kecil,
-                    nombor dan minima 8 aksara.</div>
-                <div class="password-wrapper">
-                    <label class="label">Sahkan Kata Laluan</label>
-                    <input class="global-input" id="confirm-pass" type="password"
-                        placeholder="Masukkan semula kata laluan" required>
+                    nombor dan minima 8 aksara.
                 </div>
+                <label class="label">Sahkan Kata Laluan</label>
+                <input class="global-input" id="confirm-pass" type="password" placeholder="Masukkan semula kata laluan"
+                    required>
                 <div class="error-box" id="pass-error" style="display: none;">
                     Kata laluan tidak sepadan
                 </div>
@@ -383,7 +381,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             }
         });
 
-        //Function to verify password strength
+        //Function to define password strength
         function isPasswordStrong(password) {
             const hasUpperCase = /[A-Z]/.test(password); // Check uppercase letters existance
             const hasLowerCase = /[a-z]/.test(password); // Check lowercase letters existance

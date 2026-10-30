@@ -7,8 +7,8 @@
 //$stmt= statement
 //$dsn= data source name
 
-$host = 'localhost';
-$db = 'solusitemu';
+$host = '127.0.0.1';
+$db = '2027onghongyuan';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';

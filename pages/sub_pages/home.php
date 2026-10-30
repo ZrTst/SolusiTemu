@@ -1,7 +1,12 @@
 <?php if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['role']) || $_SESSION['role'] !== 'pelanggan') {
+if (
+    !isset($_SESSION['logged_in']) ||
+    $_SESSION['logged_in'] !== true ||
+    !isset($_SESSION['role']) ||
+    ($_SESSION['role'] !== 'pelanggan' && $_SESSION['role'] !== 'juruteknik' && $_SESSION['role'] !== 'admin')
+) {
     http_response_code(401);
     include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
     exit;

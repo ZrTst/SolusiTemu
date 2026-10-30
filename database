@@ -1,0 +1,33 @@
+create table pelanggan(
+    ID_P char(4) PRIMARY KEY,
+    Nama_P varchar(50),
+    Pswd_p char(60),
+    No_Tel_P varchar(20),
+    Alamat varchar(255)
+);
+
+create table staf(
+    ID_S char(4) PRIMARY KEY,
+    Nama_S varchar(50),
+    Pswd_S char(60),
+    No_Tel_S varchar(20),
+    Peranan varchar(10),
+    Gbr_S varchar(20)
+);
+
+create table perkhidmatan(
+    ID_PK char(5) PRIMARY KEY,
+    Nama_PK varchar(20)
+);
+
+create table janjitemu (
+    ID_JT char(5) PRIMARY KEY,
+    Tarikh_Masa varchar(30),
+    Jenama varchar(10),
+    Model varchar(20),
+    'Status' varchar(20),
+    FOREIGN KEY ID_P references pelanggan(ID_P),
+    FOREIGN KEY ID_S references staf(ID_S),
+    FOREIGN KEY ID_PK references perkhidmatan(ID_PK)
+);
+

@@ -57,6 +57,7 @@ Every time a user submits form data, the data flow is processed through 3 phases
 - [x] New user account registration functionality.
 
 ### 💾 Phase 3: Core Business Logic (CRUD Operations)
+- [x] Update with new information (own profile) (Customer, Technician).
 - [ ] Add New Appointment Form (Customer).
 - [ ] Search & Display active Services and Technicians (Customer).
 - [ ] Appointment History Table display with isolated data access rights control (Customer, Technician, Admin).

@@ -28,6 +28,8 @@ All business pages are called dynamically using `include` inside `dashboard.php`
     └── api/            # Backend data processing scripts
 ├── private_core/       # Database configuration & global security functions
 ├── public/             # Static asset files
+    └── css/            # Page-specific styles
+    └── data/           # Device brand and model data
 ├── images/             # System image files
 ```
 
@@ -58,7 +60,7 @@ Every time a user submits form data, the data flow is processed through 3 phases
 
 ### 💾 Phase 3: Core Business Logic (CRUD Operations)
 - [x] Update with new information (own profile) (Customer, Technician).
-- [ ] Add New Appointment Form (Customer).
+- [x] Add New Appointment Form (Customer).
 - [ ] Search & Display active Services and Technicians (Customer).
 - [ ] Appointment History Table display with isolated data access rights control (Customer, Technician, Admin).
 - [ ] Appointment Approval & Allocation features (Technician, Admin).

@@ -28,6 +28,8 @@ Semua halaman perniagaan dipanggil secara dinamik menggunakan `include` di dalam
     └── api/            # Skrip pemprosesan data backend
 ├── private_core/       # Konfigurasi pangkalan data & fungsi keselamatan global
 ├── public/             # Fail aset statik
+    └── css/            # Gaya khusus halaman
+    └── data/           # Data jenama dan model peranti
 ├── images/             # Fail imej sistem
 ```
 
@@ -58,7 +60,7 @@ Setiap kali pengguna menghantar data borang (Form Submission), aliran data dipro
 
 ### 💾 Fasa 3: Logik Perniagaan Teras (CRUD Operations)
 - [x] Kemas kini dengan maklumat baharu (profil sendiri) (Pelanggan, Juruteknik).   
-- [ ] Borang Tambah Janjitemu Baharu (Pelanggan).
+- [x] Borang Tambah Janjitemu Baharu (Pelanggan).
 - [ ] Carian & Paparan Perkhidmatan dan Juruteknik yang aktif (Pelanggan).
 - [ ] Paparan Jadual Sejarah Janjitemu dengan kawalan hak akses data terasing (Pelanggan, Juruteknik, Admin).
 - [ ] Fungsi Kelulusan & Pengagihan Janjitemu (Juruteknik, Admin).

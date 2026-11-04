@@ -14,7 +14,17 @@ if (
 
 $user = $_SESSION['user_data'];
 $phone = $user['No_Tel_P'] ?? $user['No_Tel_S'] ?? '';
-$role = $user['peranan'] ?? '';
+// Let the front-end can display the phone number well and beautiful 
+if (trim($phone) !== '') {
+    if (substr($phone, 0, 3) === '011' || substr($phone, 0, 3) === '015') {
+        $displayUsePhoneNum = substr($phone, 0, 3) . '-' . substr($phone, 3, 4) . ' ' . substr($phone, 7);
+    } else {
+        $displayUsePhoneNum = substr($phone, 0, 3) . '-' . substr($phone, 3, 3) . ' ' . substr($phone, 6);
+    }
+} else {
+    $displayUsePhoneNum = '';
+}
+$role = $user['Peranan'] ?? '';
 $dataToChange = trim($_POST['data_type'] ?? '');
 ?>
 
@@ -47,10 +57,10 @@ $dataToChange = trim($_POST['data_type'] ?? '');
     <div class="info-group">Nombor Telefon</div>
     <div class="info-group">
         <?php
-        if (trim($phone) === '') {
+        if (trim($displayUsePhoneNum) === '') {
             echo '<span style="color: var(--gold); font-size: 18px;">Tambahkan nombor telefon untuk memudahkan urusan menghubungi!</span>';
         } else {
-            echo htmlspecialchars($phone);
+            echo htmlspecialchars($displayUsePhoneNum);
         }
         ?>
         <svg class="icons" onclick="changeInfo('number')"> <!-- function at here -->
@@ -65,11 +75,14 @@ $dataToChange = trim($_POST['data_type'] ?? '');
     <?php } else { ?>
         <!-- If user is customer -->
         <div class="info-group">Alamat</div>
-        <div class="info-group"><?php if (trim($user['Alamat']) === '') {
-            echo '<span style="color: var(--gold); font-size: 18px;">Belum dipasang alamat</span>';
-        } else {
-            echo htmlspecialchars($user['Alamat']);
-        } ?>
+        <div class="info-group">
+            <?php
+            $address = isset($user['Alamat']) ? trim($user['Alamat']) : '';
+            if ($address === '') {
+                echo '<span style="color: var(--gold); font-size: 18px;">Belum dipasang alamat</span>';
+            } else {
+                echo htmlspecialchars($address);
+            } ?>
             <svg class="icons" onclick="changeInfo('address')"> <!-- function at here -->
                 <use href="../public/icons.svg#edit-icon"></use>
             </svg>

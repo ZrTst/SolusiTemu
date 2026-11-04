@@ -15,7 +15,7 @@ if (
 <div class="msg-container">
     <div class="logo-container">
         <div class="logo-image"></div>
-        <span class="logo-text">Syarikat SolusiTemu</span>
+        <span class="logo-text">Sistem JanjiTemu Syarikat SolusiTemu</span>
     </div>
     <h1 style="font-family: 'Oswald', sans-serif;letter-spacing: 0.05em;">Selamat datang ke SolusiTemu</h1>
     <h3 style="width: 100%;word-break: break-word;">Urus dan semak janji temu anda dengan mudah di sini.</h3>

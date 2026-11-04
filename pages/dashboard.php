@@ -35,8 +35,8 @@ $page = $_GET['page'] ?? 'home';
         <div class="logo-container">
             <div class="logo-image"></div>
             <div class="logo-text-wrapper">
-                <span class="logo-text">Syarikat</span>
-                <span class="logo-text">SolusiTemu</span>
+                <span class="logo-text">Sistem JanjiTemu</span>
+                <span class="logo-text">Syarikat SolusiTemu</span>
             </div>
         </div>
 

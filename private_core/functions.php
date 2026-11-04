@@ -48,10 +48,18 @@ function db_getUserByName($pdo, $name)
 
     try {
         //Check if the name exists in PELANGGAN and STAF table
-        $sql = "SELECT `ID_P`, `Nama_P`, `Pswd_P`, `Alamat` FROM `PELANGGAN` 
+        $sql = "SELECT 
+                    `ID_P`, `Nama_P`, `Pswd_P`, `No_Tel_P`, `Alamat`, 
+                    NULL AS `ID_S`, NULL AS `Nama_S`, NULL AS `Pswd_S`, NULL AS `No_Tel_S`, NULL AS `Peranan`, NULL AS `Gbr_S`,
+                    'pelanggan' AS `peranan`
+                FROM `PELANGGAN` 
                 WHERE `Nama_P` = ?
                 UNION ALL
-                SELECT `ID_S`, `Nama_S`, `Pswd_S`, `Peranan` FROM `STAF` 
+                SELECT 
+                    NULL AS `ID_P`, NULL AS `Nama_P`, NULL AS `Pswd_P`, NULL AS `No_Tel_P`, NULL AS `Alamat`, 
+                    `ID_S`, `Nama_S`, `Pswd_S`, `No_Tel_S`, `Peranan`, `Gbr_S`,
+                    `Peranan` AS `peranan`
+                FROM `STAF` 
                 WHERE `Nama_S` = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$name, $name]);
@@ -194,9 +202,10 @@ function db_updateData($pdo, $userId, $dataType, $dataChange)
     $trimDataChange = trim($dataChange);
     $trimDbColumn = trim($dataType);
 
-    if (empty($trimUserId) || empty($trimDataChange) || empty($trimDbColumn)) {
+    if ($trimUserId === '' || $trimDbColumn === '' || $trimDataChange === '') {
         return 'invalid';
     }
+
     if (!preg_match('/^[PJA]\d{3}$/i', $trimUserId)) {
         return false;
     }
@@ -216,7 +225,7 @@ function db_updateData($pdo, $userId, $dataType, $dataChange)
     }
 
     // Prevent changing something not allowed e.g User ID, Role 
-    if (!in_array($trimDbColumn, $allowedColumns))
+    if (!in_array($trimDbColumn, $allowedColumns, true))
         return 'invalid';
 
     // If the user data wanted to change is password
@@ -225,17 +234,87 @@ function db_updateData($pdo, $userId, $dataType, $dataChange)
     }
 
     try {
-        $sql = "UPDATE `$tablename` SET `$trimDbColumn` = ? WHERE `$tablename`.`$idtype` = ?";
+        $sql = "UPDATE `$tablename` SET `$trimDbColumn` = ? WHERE `$idtype` = ?";
         $stmt = $pdo->prepare($sql);
         $success = $stmt->execute([$trimDataChange, $trimUserId]);
-        if ($success) {
-            return true;
-        }
-        return false;
+        return $success;
 
     } catch (PDOException $e) {
         error_log("Database query failed in db_updateData: " . $e->getMessage());
         return 'error';
+    }
+}
+
+function db_getAllServices($pdo)
+{
+    try {
+        // Get all services in database
+        $sql = "SELECT * FROM `perkhidmatan` ORDER BY `ID_PK` ASC";
+        $stmt = $pdo->query($sql);
+        $rows = $stmt->fetchAll();
+
+        // Define how should the services list
+        $tree = [
+            'hardware' => [],
+            'software' => []
+        ];
+
+        // Save the services in array using foreach
+        foreach ($rows as $row) {
+            $idService = $row['ID_PK'];
+            $servicesFullName = $row['Nama_PK'];
+
+            // Seperate services to major category, subcategory, activity/status
+            $part = explode('.', $servicesFullName);
+
+            // To prevent unexpected situation and skip that row
+            if (count($part) < 3) {
+                continue;
+            }
+
+            // Define each part by each category 
+            $mainCat = trim($part[0]);
+            $subCat = trim($part[1]);
+            $activity = trim($part[2]);
+
+            // Put data in to hardware[]
+            if ($mainCat === 'HW') {
+                if (!isset($tree['hardware'][$subCat])) {
+                    $tree['hardware'][$subCat] = [];
+                }
+                $tree['hardware'][$subCat][] = [
+                    'idService' => $idService,
+                    'serviceActivity' => $activity
+                ];
+                // Put data in to software[]
+            } elseif ($mainCat === 'SW') {
+                if (!isset($tree['software'][$subCat])) {
+                    $tree['software'][$subCat] = [];
+                }
+                $tree['software'][$subCat][] = [
+                    'idService' => $idService,
+                    'serviceActivity' => $activity
+                ];
+            }
+            // Final will become (use SW.SYSTEM.BOOTLOOP and SW.BROWSER.CRASH as e.g.)
+            // $tree = [
+            //     'hardware' => [...],
+            //     'software' => [
+            //         'SYSTEM' => [['idService' => 'PK031', 'serviceActivity' => 'BOOTLOOP'],
+            //                      ['idService' => 'PK032', 'serviceActivity' => 'UPGRADE'],
+            //                      ...
+            //                     ],
+            //         'BROWSER' => [['idService' => 'PK038', 'serviceActivity' => 'CRASH'], 
+            //                      [...]
+            //                     ],
+            //         ...
+            //     ]
+            // ];
+        }
+        return $tree;
+    } catch (PDOException $e) {
+        error_log("Database query failed in db_getAllServices: " . $e->getMessage());
+        return ['hardware' => [], 'software' => []];
     }
 }
 ?>

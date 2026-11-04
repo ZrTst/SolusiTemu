@@ -62,4 +62,31 @@
     <path d="M13.5 6.5l4 4" />
     <path d="M16 19h6" />
   </symbol>
+
+  <!-- Tool icon -->
+  <symbol id="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 10h3v-3l-3.5 -3.5a6 6 0 0 1 8 8l6 6a2 2 0 0 1 -3 3l-6 -6a6 6 0 0 1 -8 -8l3.5 3.5" />
+  </symbol>
+
+  <!-- Search icon -->
+  <symbol id="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+    <path d="M21 21l-6 -6" />
+  </symbol>
+
+  <!-- Chevron right icon-->
+  <symbol id="chevron-right-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    stroke-width="1"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 6l6 6l-6 6" />
+  </symbol>
+
+  <!-- Chevron left icon-->
+  <symbol id="chevron-left-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    stroke-width="1"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 6l-6 6l6 6" />
+  </symbol>
 </svg>

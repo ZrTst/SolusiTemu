@@ -52,7 +52,7 @@
     display: block;
     width: 100%;
     font-size: 25px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     padding: 16px 20px;
     background: transparent;
     color: var(--text);
@@ -130,15 +130,16 @@
     border-radius: 20px;
     z-index: 1000;
     margin: 20px;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     justify-content: center;
     align-items: center;
 }
 
-/* Overflow Slider */
+/* Overflow Slider
 .main-content::-webkit-scrollbar {
     width: 8px;
+    right: 1%;
 }
 
 .main-content::-webkit-scrollbar-track {
@@ -147,12 +148,12 @@
 }
 
 .main-content::-webkit-scrollbar-thumb {
-    background-color: var(--gold);
+    background-color: var(--gold-bright);
     border-radius: 20px;
     border: 2px solid var(--panel);
     transition: background-color 0.2s;
 }
 
 .main-content::-webkit-scrollbar-thumb:hover {
-    background-color: var(--gold-dim);
-}
+    background-color: var(--gold);
+} */

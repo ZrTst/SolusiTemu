@@ -1,0 +1,326 @@
+/* User appointment page */
+.appointment-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+    align-items: start;
+    align-content: start;
+    gap: 20px;
+    width: 100%;
+    height: calc(100vh - 40px);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.appointment-container>*:last-child {
+    margin-bottom: 50px;
+}
+
+.banner-container {
+    display: flex;
+    grid-column: span 2;
+    flex-direction: row;
+    align-items: center;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    grid-column: span 2;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.search-bar {
+    height: max-content;
+    color: var(--text);
+    font-size: 15px;
+    border: 2px solid var(--border);
+    background: transparent;
+    gap: 9px;
+    border-radius: 10px;
+    padding: 12px;
+    padding-right: 40px;
+    border: 2px solid var(--border);
+}
+
+.search-bar:focus {
+    border-color: var(--gold-bright);
+    box-shadow: 0 0 15px 1px rgba(240, 195, 105, 0.3);
+    outline: none;
+}
+
+.search-bar:hover {
+    box-shadow: 0 0 15px 1px rgba(240, 195, 105, 0.3);
+}
+
+.search-container .icons {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    right: 1%;
+}
+
+.appointment-container .label {
+    font-size: 25px;
+    text-decoration: underline;
+    margin-bottom: 0px;
+}
+
+.services-container {
+    grid-column: span 2;
+    background: transparent;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+    align-items: start;
+    align-content: start;
+    gap: 20px;
+}
+
+.hardware-services,
+.software-services {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    align-items: start;
+    color: var(--text);
+    align-items: center;
+    grid-column: span 1;
+}
+
+.hardware-services .label,
+.software-services .label {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 5px;
+    font-size: 25px;
+    margin-bottom: 0px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.activities-container {
+    display: none;
+    flex-direction: column;
+    grid-column-start: 2;
+    margin-bottom: 10px;
+}
+
+.activities-btn,
+.modal {
+    display: flex;
+    background: transparent;
+    font-size: 25px;
+    color: var(--text);
+    border: transparent;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: left;
+    grid-column: span 1;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.activities-btn:hover,
+.modal:hover {
+    color: var(--gold-bright);
+}
+
+.chevron {
+    transition: transform 0.2s ease;
+}
+
+.subCat {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.subCat .label:hover,
+.modal:hover,
+.time.label:hover {
+    color: var(--gold-bright);
+}
+
+.brands-container {
+    grid-column: span 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    align-items: start;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.brand {
+    padding: 10px 20px;
+    margin: 0px 5px;
+    border: 2px solid var(--border);
+    background: transparent;
+    font-size: 20px;
+    border-radius: 10px;
+    align-items: center;
+    width: max-content;
+    height: max-content;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.brand:hover {
+    border-color: var(--gold-bright);
+    box-shadow: 0 0 15px 1px rgba(240, 195, 105, 0.3);
+    color: var(--gold-bright);
+}
+
+.brand .label {
+    text-decoration: none;
+}
+
+.modals-container {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.modals-container span {
+    grid-column: span 4;
+    place-items: center;
+}
+
+.modals-container .label {
+    text-decoration: none;
+}
+
+.calendar {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    color: var(--text);
+    justify-content: center;
+}
+
+.year-month {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    align-items: center;
+}
+
+.year-month .label {
+    font-size: 50px;
+}
+
+.year-month .icons {
+    width: 50px;
+    height: 50px;
+}
+
+.days,
+.days-label {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    padding: 10px;
+}
+
+.calendar .label {
+    text-decoration: none;
+}
+
+.date-container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.days {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    color: var(--text);
+    border-radius: 10px;
+    border: transparent;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.days:hover {
+    background: grey;
+}
+
+.days.label.today {
+    border: 2px solid var(--border);
+}
+
+.time-container {
+    grid-column: span 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.time-container .label {
+    grid-column: span 1;
+}
+
+.time.label {
+    text-decoration: none;
+    background: transparent;
+    border: transparent;
+    border-radius: 10px;
+    padding: 5px 20px;
+    transition: transform 0.3s ease;
+}
+
+.reset-btn {
+    width: 50%;
+    background: transparent;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    transition: transform 0.5s ease;
+}
+
+.reset-btn:hover {
+    border-color: var(--gold-bright);
+    box-shadow: 0 0 15px 1px rgba(240, 195, 105, 0.3);
+}
+
+.reset-btn.label {
+    text-decoration: none;
+}
+
+.submit-btn {
+    margin-top: 0px !important;
+    grid-column: span 2;
+    width: 25%;
+}
+
+/* Overflow Slider */
+.appointment-container::-webkit-scrollbar {
+    width: 8px;
+    right: 1%;
+}
+
+.appointment-container::-webkit-scrollbar-track {
+    background: var(--panel);
+    border-radius: 20px;
+}
+
+.appointment-container::-webkit-scrollbar-thumb {
+    background-color: var(--gold-bright);
+    border-radius: 20px;
+    border: 2px solid var(--panel);
+    transition: background-color 0.2s;
+}
+
+.appointment-container::-webkit-scrollbar-thumb:hover {
+    background-color: var(--gold);
+}

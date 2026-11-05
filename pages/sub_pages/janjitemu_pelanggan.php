@@ -150,7 +150,7 @@ $softwareList = $allServices['software'] ?? [];
         </div>
     </div>
     <button type="button" class="reset-btn label">Reset</button>
-    <button class="submit-btn">Selesai</button>
+    <button class="submit-btn" id="submitBtn" disabled>Selesai</button>
 </form>
 <!-- JavaScripts -->
 <script>
@@ -222,6 +222,7 @@ $softwareList = $allServices['software'] ?? [];
             element.style.transform = "scale(0.95)";
             element.style.boxShadow = "inset 4px 4px 10px rgba(0,0,0,0.3)";
         }
+        checkFormValidity();
     }
 
     // Function get all brands and modals from JSON file
@@ -282,6 +283,9 @@ $softwareList = $allServices['software'] ?? [];
             if (selectedBrandName) {
                 selectedBrandName.value = brandName;
             }
+            if (selectedModalName) {
+                selectedModalName.value = '';
+            }
             document.querySelectorAll('.brands-container .brand').forEach(btn => {
                 if (btn !== element) {
                     btn.style.color = '';
@@ -295,6 +299,7 @@ $softwareList = $allServices['software'] ?? [];
             element.style.boxShadow = "0 0 15px 1px rgba(240, 195, 105, 0.3)";
             displayModals(brandName, currentForm);
         }
+        checkFormValidity();
     }
 
     // Display modals with selected brand
@@ -338,6 +343,7 @@ $softwareList = $allServices['software'] ?? [];
             element.style.transform = "scale(0.95)";
             element.style.boxShadow = "inset 4px 4px 10px rgba(0,0,0,0.3)";
         }
+        checkFormValidity();
     }
 
     // Calendar rendering
@@ -417,6 +423,7 @@ $softwareList = $allServices['software'] ?? [];
 
     // Selected Date value
     const selectedDate = document.querySelector('input[name="date"]');
+
     function selectDate(element) {
         const targetDate = element.dataset.date;
         if (selectedDate.value === targetDate) {
@@ -434,12 +441,14 @@ $softwareList = $allServices['software'] ?? [];
         }
         if (selectedTime) selectedTime.value = '';
         renderTime();
+        checkFormValidity();
     }
 
     // Display available time
     const selectedTime = document.querySelector('input[name="time"]');
     const timeContainer = document.querySelector('.time-container');
     const availableSlots = ['09:00', '10:30', '12:00', '14:00', '15:30', '17:00'];
+
     function renderTime() {
         let htmlTimesContainer = '<label class="label" style="width: 100%;margin:10px 10px;">Pilih Masa</label>';
         const now = new Date();
@@ -486,6 +495,7 @@ $softwareList = $allServices['software'] ?? [];
             element.style.boxShadow = "inset 4px 4px 10px rgba(0,0,0,0.3)";
         }
         renderTime();
+        checkFormValidity();
     }
 
     resetBtn.addEventListener('click', () => {
@@ -498,7 +508,28 @@ $softwareList = $allServices['software'] ?? [];
         }
         renderTime();
         renderCalendar();
+        setTimeout(checkFormValidity, 50);
     });
+
+    // Check validation and integrity of input
+    function checkFormValidity() {
+        const currentForm = document.getElementById('appointment-container');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Total input required
+        const idService = currentForm.querySelector('input[name="idService"]').value;
+        const brandName = currentForm.querySelector('input[name="brandName"]').value;
+        const modalName = currentForm.querySelector('input[name="modalName"]').value;
+        const date = currentForm.querySelector('input[name="date"]').value;
+        const time = currentForm.querySelector('input[name="time"]').value;
+
+        if (idService !== '' && brandName !== '' && modalName !== '' && date !== '' && time !== '') {
+            submitBtn.disabled = false;
+        } else {
+            submitBtn.disabled = true;
+        }
+    }
+
 
     // Call the getData() function after all html rendering successful
     document.addEventListener("DOMContentLoaded", getData, { once: true });

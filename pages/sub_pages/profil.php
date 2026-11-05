@@ -14,7 +14,7 @@ if (
 
 $user = $_SESSION['user_data'];
 $phone = $user['No_Tel_P'] ?? $user['No_Tel_S'] ?? '';
-// Let the front-end can display the phone number well and beautiful 
+// Let the frontend display phone number followed national numbering plan by MCMC
 if (trim($phone) !== '') {
     if (substr($phone, 0, 3) === '011' || substr($phone, 0, 3) === '015') {
         $displayUsePhoneNum = substr($phone, 0, 3) . '-' . substr($phone, 3, 4) . ' ' . substr($phone, 7);

@@ -15,6 +15,37 @@ require_once __DIR__ . '/../private_core/functions.php';
 $role = $_SESSION['role'] ?? 'pelanggan';
 $page = $_GET['page'] ?? 'home';
 
+$roleMenus = [
+    'admin' => [
+        'title' => 'Pentadbir tertinggi,',
+        'pages' => [
+            'janjitemu_admin' => ['label' => 'Janjitemu', 'file' => 'janjitemu_admin.php'],
+            'perkhidmatan_admin' => ['label' => 'Perkhidmatan', 'file' => 'perkhidmatan_admin.php'],
+            'pengguna_admin' => ['label' => 'Pengguna', 'file' => 'pengguna_admin.php'],
+            'laporan_admin' => ['label' => 'Laporan', 'file' => 'laporan_admin.php'],
+            'import_admin' => ['label' => 'Import', 'file' => 'import_admin.php'],
+        ]
+    ],
+    'juruteknik' => [
+        'title' => 'Pakar teknikal teras,',
+        'pages' => [
+            'janjitemu_juruteknik' => ['label' => 'Janjitemu', 'file' => 'janjitemu_juruteknik.php'],
+            'perkhidmatan_pengguna' => ['label' => 'Perkhidmatan', 'file' => 'perkhidmatan_pengguna.php'],
+            'profil' => ['label' => 'Profil', 'file' => 'profil.php'],
+        ]
+    ],
+    'pelanggan' => [
+        'title' => 'Pengguna yang dihormati,',
+        'pages' => [
+            'janjitemu_pelanggan' => ['label' => 'Janjitemu', 'file' => 'janjitemu_pelanggan.php'],
+            'perkhidmatan_pengguna' => ['label' => 'Perkhidmatan', 'file' => 'perkhidmatan_pengguna.php'],
+            'juruteknik' => ['label' => 'Juruteknik', 'file' => 'juruteknik.php'],
+            'profil' => ['label' => 'Profil', 'file' => 'profil.php'],
+        ]
+    ]
+];
+
+$currentRole = $roleMenus[$role] ?? $roleMenus['pelanggan'];
 ?>
 
 <!DOCTYPE html>
@@ -40,49 +71,19 @@ $page = $_GET['page'] ?? 'home';
             </div>
         </div>
 
-        <?php if ($role === 'admin'): ?>
-            <h2 class="font-oswald">Pentadbir tertinggi,</h2>
-        <?php elseif ($role === 'juruteknik'): ?>
-            <h2 class="font-oswald">Pakar teknikal teras,</h2>
-        <?php else: ?>
-            <h2 class="font-oswald">Pengguna yang dihormati,</h2>
-        <?php endif; ?>
+        <h2 class="font-oswald">
+            <?= htmlspecialchars($currentRole['title']) ?>
+        </h2>
         <h2 class="font-oswald">
             <?= htmlspecialchars($_SESSION['name']) ?>
         </h2>
         <div class="sidebar-vertical-btn-group">
-            <?php if ($role === 'admin'): ?>
-                <a href="dashboard.php?page=janjitemu_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
-                    <span>Janjitemu</span></a>
-                <a href="dashboard.php?page=perkhidmatan_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
-                    <span>Perkhidmatan</span></a>
-                <a href="dashboard.php?page=pengguna_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
-                    <span>Pengguna</span></a>
-                <a href="dashboard.php?page=laporan_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
-                    <span>Laporan</span></a>
-                <a href="dashboard.php?page=import_admin" class="sidebar-vertical-btn" style="text-decoration: none;">
-                    <span>Import</span></a>
-            <?php elseif ($role === 'juruteknik'): ?>
-                <a href="dashboard.php?page=janjitemu_juruteknik" class="sidebar-vertical-btn"
-                    style="text-decoration: none;">
-                    <span>Janjitemu</span></a>
-                <a href="dashboard.php?page=perkhidmatan_pengguna" class="sidebar-vertical-btn"
-                    style="text-decoration: none;">
-                    <span>Perkhidmatan</span></a>
-                <a href="dashboard.php?page=profil" class="sidebar-vertical-btn" style="text-decoration: none;">
-                    <span>Profil</span></a>
-            <?php else: ?>
-                <a href="dashboard.php?page=janjitemu_pelanggan" class="sidebar-vertical-btn"
-                    style="text-decoration: none;">
-                    <span>Janjitemu</span></a>
-                <a href="dashboard.php?page=perkhidmatan_pengguna" class="sidebar-vertical-btn"
-                    style="text-decoration: none;">
-                    <span>Perkhidmatan</span></a>
-                <a href="dashboard.php?page=juruteknik" class="sidebar-vertical-btn" style="text-decoration: none;">
-                    <span>Juruteknik</span></a>
-                <a href="dashboard.php?page=profil" class="sidebar-vertical-btn" style="text-decoration: none;">
-                    <span>Profil</span></a>
-            <?php endif; ?>
+            <?php foreach ($currentRole['pages'] as $pageKey => $menuItem): ?>
+                <a href="dashboard.php?page=<?= $pageKey ?>" class="sidebar-vertical-btn" style="text-decoration: none;">
+                    <span><?= htmlspecialchars($menuItem['label']) ?></span>
+                </a>
+            <?php endforeach; ?>
+
             <a href="logout.php" style="text-decoration: none">
                 <button id="logout-btn" class="logout-btn">Log Keluar
                     <svg class="icons">
@@ -94,61 +95,12 @@ $page = $_GET['page'] ?? 'home';
     </nav>
     <main class="main-content">
         <?php
-        if ($role === 'admin'):
-            switch ($page) {
-                case 'janjitemu_admin':
-                    require_once __DIR__ . '/sub_pages/janjitemu_admin.php';
-                    break;
-                case 'perkhidmatan_admin':
-                    require_once __DIR__ . '/sub_pages/perkhidmatan_admin.php';
-                    break;
-                case 'pengguna_admin':
-                    require_once __DIR__ . '/sub_pages/pengguna_admin.php';
-                    break;
-                case 'laporan_admin':
-                    require_once __DIR__ . '/sub_pages/laporan_admin.php';
-                    break;
-                case 'import_admin':
-                    require_once __DIR__ . '/sub_pages/import_admin.php';
-                    break;
-                default:
-                    require_once __DIR__ . '/sub_pages/home.php';
-                    break;
-            }
-        elseif ($role === 'juruteknik'):
-            switch ($page) {
-                case 'janjitemu_juruteknik':
-                    require_once __DIR__ . '/sub_pages/janjitemu_juruteknik.php';
-                    break;
-                case 'perkhidmatan_pengguna':
-                    require_once __DIR__ . '/sub_pages/perkhidmatan_pengguna.php';
-                    break;
-                case 'profil':
-                    require_once __DIR__ . '/sub_pages/profil.php';
-                    break;
-                default:
-                    require_once __DIR__ . '/sub_pages/home.php';
-                    break;
-            }
-        else:
-            switch ($page) {
-                case 'janjitemu_pelanggan':
-                    require_once __DIR__ . '/sub_pages/janjitemu_pelanggan.php';
-                    break;
-                case 'perkhidmatan_pengguna':
-                    require_once __DIR__ . '/sub_pages/perkhidmatan_pengguna.php';
-                    break;
-                case 'juruteknik':
-                    require_once __DIR__ . '/sub_pages/juruteknik.php';
-                    break;
-                case 'profil':
-                    require_once __DIR__ . '/sub_pages/profil.php';
-                    break;
-                default:
-                    require_once __DIR__ . '/sub_pages/home.php';
-                    break;
-            }
-        endif;
+        if (array_key_exists($page, $currentRole['pages'])) {
+            $fileToInclude = $currentRole['pages'][$page]['file'];
+            require_once __DIR__ . "/sub_pages/{$fileToInclude}";
+        } else {
+            require_once __DIR__ . '/sub_pages/home.php';
+        }
         ?>
     </main>
     <script>

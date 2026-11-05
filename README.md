@@ -54,7 +54,7 @@ Setiap kali pengguna menghantar data borang (Form Submission), aliran data dipro
 
 ### 📐 Fasa 2: Layout Dashboard & Router 
 - [x] Implementasi susun atur Flexbox (Kiri Fixed Sidebar, Kanan Flex Main Content).
-- [x] Struktur nested `if-else` + `switch-case` di dalam `dashboard.php`.
+- [x] Gunakan sintaks 'foreach' dalam 'dashboard.php' untuk memaparkan butang dan membawa pengguna ke halaman yang berkaitan. 
 - [x] Menyediakan folder `pages/sub_pages/` dan `pages/api/`.
 - [x] Fungsi pendaftaran akaun pengguna baharu.
 

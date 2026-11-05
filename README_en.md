@@ -54,7 +54,7 @@ Every time a user submits form data, the data flow is processed through 3 phases
 
 ### 📐 Phase 2: Dashboard Layout & Router 
 - [x] Implementation of Flexbox layout (Fixed Left Sidebar, Flexible Right Main Content).
-- [x] Nested `if-else` + `switch-case` structures inside `dashboard.php`.
+- [x] Use 'foreach' syntax in 'dashboard.php' in order to render button and bring user to corresponding page
 - [x] Setting up `pages/sub_pages/` and `pages/api/` folders.
 - [x] New user account registration functionality.
 

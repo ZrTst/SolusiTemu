@@ -79,7 +79,8 @@ $currentRole = $roleMenus[$role] ?? $roleMenus['pelanggan'];
         </h2>
         <div class="sidebar-vertical-btn-group">
             <?php foreach ($currentRole['pages'] as $pageKey => $menuItem): ?>
-                <a href="dashboard.php?page=<?= $pageKey ?>" class="sidebar-vertical-btn" style="text-decoration: none;">
+                <a href="dashboard.php?page=<?= $pageKey ?>"
+                    class="sidebar-vertical-btn <?= $page === $pageKey ? 'active' : '' ?>" style="text-decoration: none;">
                     <span><?= htmlspecialchars($menuItem['label']) ?></span>
                 </a>
             <?php endforeach; ?>
@@ -95,7 +96,9 @@ $currentRole = $roleMenus[$role] ?? $roleMenus['pelanggan'];
     </nav>
     <main class="main-content">
         <?php
-        if (array_key_exists($page, $currentRole['pages'])) {
+        if (($page === 'pilih_juruteknik' || $page === 'sejarah_janjitemu') && $role === 'pelanggan') {
+            require_once __DIR__ . "/sub_pages/{$page}.php";
+        } elseif (array_key_exists($page, $currentRole['pages'])) {
             $fileToInclude = $currentRole['pages'][$page]['file'];
             require_once __DIR__ . "/sub_pages/{$fileToInclude}";
         } else {

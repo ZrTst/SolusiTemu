@@ -28,7 +28,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         } elseif ($resultStatus === 'error') {
             $_SESSION['status'] = 'DatabaseError';
         } elseif ($resultStatus === false) {
-            $statusInsert = db_insertData($pdo, $name, $password);
+            $statusInsert = db_userRegister($pdo, $name, $password);
             if ($statusInsert === true) {
                 $_SESSION['status'] = 'RegisterSuccess';
             } elseif ($statusInsert === 'weakpass') {

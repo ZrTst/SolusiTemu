@@ -142,11 +142,22 @@ function db_checkName($pdo, $name)
 }
 
 //Function to insert new user into database
-function db_insertData($pdo, $name, $password)
+function db_userRegister($pdo, $name, $password)
 {
     //Check if the name of password is empty or not
     if (trim($name) === '' || trim($password) === '') {
         return 'invalid';
+    }
+
+    // Check the strength of the password
+    // Pattern analyze
+    //(?=.*[a-z]) = Must contain a-z
+    //(?=.*[A-Z]) = Must contain A-Z
+    //(?=.*[0-9]) = Must contain 0-9
+    //{8, } = Must be at least 8 characters long
+    $passwordPattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/';
+    if (!preg_match($passwordPattern, $password)) {
+        return 'weakpass';
     }
     try {
         $pdo->beginTransaction(); //To prevent Id duplicate when more then one people register together
@@ -164,19 +175,7 @@ function db_insertData($pdo, $name, $password)
             $newId = 'P001';
         }
 
-        // ===== Step 2 : Hash Encryption =====
-        // == Step 2(a) : Check the strength of the password ==
-        // Pattern analyze
-        //(?=.*[a-z]) = Must contain a-z
-        //(?=.*[A-Z]) = Must contain A-Z
-        //(?=.*[0-9]) = Must contain 0-9
-        //{8, } = Must be at least 8 characters long
-        $passwordPattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/';
-        if (!preg_match($passwordPattern, $password)) {
-            return 'weakpass';
-        }
-
-        // == Step 2(b) : Hash the password
+        // == Step 2 : Hash the password
         $hashed_pass = password_hash($password, PASSWORD_DEFAULT);
 
         // ===== Step 3 : Insert data into the database =====
@@ -207,7 +206,7 @@ function db_updateData($pdo, $userId, $dataType, $dataChange)
     }
 
     if (!preg_match('/^[PJA]\d{3}$/i', $trimUserId)) {
-        return false;
+        return 'invalid';
     }
 
     $prefix = strtoupper(substr($trimUserId, 0, 1));
@@ -315,6 +314,116 @@ function db_getAllServices($pdo)
     } catch (PDOException $e) {
         error_log("Database query failed in db_getAllServices: " . $e->getMessage());
         return ['hardware' => [], 'software' => []];
+    }
+}
+
+// Function to insert/add appointment in to database
+function db_addAppointment($pdo, $userId, $staffId, $idService, $brandName, $modalName, $timeDate)
+{
+    try {
+        $pdo->beginTransaction();
+        $stmtCheckId = $pdo->query("SELECT ID_JT FROM `janjitemu` ORDER BY ID_JT DESC LIMIT 1 FOR UPDATE");
+        $lastRow = $stmtCheckId->fetch();
+
+        if ($lastRow) {
+            $lastId = $lastRow['ID_JT'];
+            $numberId = substr($lastId, 2);
+            $nextNumber = (int) $numberId + 1;
+            $newId = 'JT' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        } else {
+            $newId = 'JT001';
+        }
+
+        $sql = 'INSERT INTO `janjitemu` (`ID_JT`, `Tarikh_Masa`, `Jenama`, `Model`, `Status`, `ID_P`, `ID_S`, `ID_PK`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+        $stmt = $pdo->prepare($sql);
+        $success = $stmt->execute([$newId, $timeDate, $brandName, $modalName, 'SCHEDULED.WAITING', $userId, $staffId, $idService]);
+        if ($success) {
+            $pdo->commit();
+        }
+        return $success;
+
+    } catch (PDOException $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack(); // Undo operation
+        }
+        error_log("Database query failed in db_addAppointment: " . $e->getMessage());
+        return 'error';
+    }
+}
+
+// Function to get available technicans
+function db_getAvailableTechnicans($pdo, $timeDate)
+{
+
+    if (empty($timeDate)) {
+        return [];
+    }
+
+    try {
+        $sql = "SELECT s.ID_S, s.Nama_S, s.No_Tel_S, s.Gbr_S 
+                FROM staf s 
+                WHERE s.Peranan = 'juruteknik' 
+                AND NOT EXISTS (
+                    SELECT 1 FROM janjitemu jt 
+                    WHERE jt.ID_S = s.ID_S AND jt.Tarikh_Masa = ?
+                )";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$timeDate]);
+        $technicans = $stmt->fetchAll();
+        return $technicans;
+    } catch (PDOException $e) {
+        error_log("Database query failed in db_getAvailableTechnicans: " . $e->getMessage());
+        return [];
+    }
+}
+
+// Function to get customers' history appointment
+function db_getHistoryAppointment($pdo, $userId)
+{
+    if ($userId === '' || empty($userId)) {
+        return [];
+    }
+    $trimUserId = trim($userId);
+    try {
+        $sql = 'SELECT jt.*, s.Nama_S, pk.Nama_PK 
+            FROM janjitemu jt
+            INNER JOIN staf s ON jt.ID_S = s.ID_S 
+            INNER JOIN perkhidmatan pk ON jt.ID_PK = pk.ID_PK
+            WHERE ID_P = ?
+            ORDER BY Tarikh_Masa ASC';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$trimUserId]);
+        $history = $stmt->fetchAll();
+        if ($history !== '') {
+            return $history;
+        }
+        return [];
+    } catch (PDOException $e) {
+        error_log("Database query failed in db_getHistoryAppointment: " . $e->getMessage());
+        return [];
+    }
+}
+
+// Function to get all customers' history appointment
+function db_getAllAppointment($pdo)
+{
+    try {
+        $sql = 'SELECT jt.*, s.Nama_S, pk.Nama_PK , p.Nama_P
+            FROM janjitemu jt
+            INNER JOIN pelanggan p ON jt.ID_P = p.ID_P
+            INNER JOIN staf s ON jt.ID_S = s.ID_S 
+            INNER JOIN perkhidmatan pk ON jt.ID_PK = pk.ID_PK
+            ORDER BY Tarikh_Masa ASC';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll();
+        if ($rows !== '') {
+            return $rows;
+        }
+        return [];
+    } catch (PDOException $e) {
+        error_log("Database query failed in db_getHistoryAppointment: " . $e->getMessage());
+        return [];
     }
 }
 ?>

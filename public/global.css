@@ -16,15 +16,18 @@
     --panel-raised: #1b1b1e;
     --border: #474747;
     --border-soft: #252525;
+    --border-blue: #22262f;
     --text: #e7e9eb;
     --text-caramel: #1a1100;
     --text-dim: #94908a;
     --text-faint: #5c5852;
+    --text-grey: #8a92a6;
     --gold: #d9a441;
     --gold-bright: #f0c369;
     --gold-dim: #5c4a24;
+    --gold-champagne: #D4AF37;
     --icon: #607d8b;
-    --icon-active: #2196f3;
+    --icon-active: #f0c369;
 }
 
 body {

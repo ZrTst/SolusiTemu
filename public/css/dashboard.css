@@ -29,12 +29,12 @@
     align-items: center;
     margin: 5px;
     box-sizing: border-box;
-
+    color: var(--text-grey);
 }
 
 .sidebar-container h2.font-oswald:nth-of-type(2) {
     font-size: 2rem;
-    color: var(--text);
+    color: var(--gold-bright);
     font-weight: 700;
     margin-bottom: 20px;
 }
@@ -62,12 +62,19 @@
     border-bottom: 2px solid var(--border);
     cursor: pointer;
     transition: all 0.2s ease;
+    transform: scale(1);
 }
 
-.sidebar-vertical-btn:hover {
+.sidebar-vertical-btn:hover,
+.sidebar-vertical-btn.active {
     background-color: var(--panel-raised);
     color: var(--gold-bright);
     padding-left: 24px;
+}
+
+.sidebar-vertical-btn:active {
+    transform: scale(0.99);
+    transition: transform 0.05s ease;
 }
 
 .sidebar-container .logo-container {

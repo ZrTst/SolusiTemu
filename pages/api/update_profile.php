@@ -16,11 +16,10 @@ require_once __DIR__ . '/../../private_core/config.php';
 require_once __DIR__ . '/../../private_core/functions.php';
 
 // Unified function
-function redirectWithStatus($status)
-{
+$redirectWithStatus = function ($status) {
     header("Location: ../dashboard.php?page=profil&status=" . urlencode($status));
     exit();
-}
+};
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     // 4 types data name, password, number, address
@@ -36,26 +35,26 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
     // Check validation of inputs
     if (empty($data_type) || empty($userId) || empty($dataChange)) {
-        redirectWithStatus('invalid');
+        $redirectWithStatus('invalid');
     }
 
     // Check validation of data types 
     $allowedDataTypes = ['name', 'password', 'number', 'address'];
     if (!in_array($data_type, $allowedDataTypes, true)) {
-        redirectWithStatus('invalid');
+        $redirectWithStatus('invalid');
     }
 
     // Check strength of password (if)
     if ($data_type === 'password') {
         if (!preg_match($passwordPattern, $dataChange)) {
-            redirectWithStatus('weak_password');
+            $redirectWithStatus('weak_password');
         }
     }
 
     //Check validation of phone number (if)
     if ($data_type === 'number') {
         if (!preg_match($phoneNumberPattern, $dataChange)) {
-            redirectWithStatus('invalid_phone_number');
+            $redirectWithStatus('invalid_phone_number');
         }
         // Deleted dash(-) then update in database
         // ========== str_replace('target', 'replace to', 'String')
@@ -65,7 +64,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     //Check validation of name used (if)
     if ($data_type === 'name') {
         if (db_checkName($pdo, $dataChange) === true) {
-            redirectWithStatus('name_used');
+            $redirectWithStatus('name_used');
         }
     }
 
@@ -83,7 +82,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $db_column = 'No_Tel_S';
                 break;
             case 'address':
-                redirectWithStatus('invalid');
+                $redirectWithStatus('invalid');
         }
     } else {
         switch ($data_type) {
@@ -103,7 +102,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     }
 
     if (empty($db_column)) {
-        redirectWithStatus('invalid');
+        $redirectWithStatus('invalid');
     }
 
     $response = db_updateData($pdo, $userId, $db_column, $dataChange);
@@ -114,8 +113,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $_SESSION['name'] = $user['Nama_P'] ?? $user['Nama_S'] ?? '';
         }
         $_SESSION['user_data'] = $user;
-        redirectWithStatus('success');
+        $redirectWithStatus('success');
     }
-    redirectWithStatus($response);
+    $redirectWithStatus($response);
 }
 ?>

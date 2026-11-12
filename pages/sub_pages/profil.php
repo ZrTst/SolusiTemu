@@ -1,4 +1,5 @@
-<?php if (session_status() === PHP_SESSION_NONE) {
+<?php
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (
@@ -12,9 +13,9 @@ if (
     exit;
 }
 
-$user = $_SESSION['user_data'];
+$user = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : [];
 $phone = $user['No_Tel_P'] ?? $user['No_Tel_S'] ?? '';
-// Let the frontend display phone number followed national numbering plan by MCMC
+// Displays phone numbers with the national numbering plan
 if (trim($phone) !== '') {
     if (substr($phone, 0, 3) === '011' || substr($phone, 0, 3) === '015') {
         $displayUsePhoneNum = substr($phone, 0, 3) . '-' . substr($phone, 3, 4) . ' ' . substr($phone, 7);

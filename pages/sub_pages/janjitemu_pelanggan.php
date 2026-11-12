@@ -19,15 +19,8 @@ $softwareList = $allServices['software'] ?? [];
 
 ?>
 
-<link rel="stylesheet" href="../public/css/appointment_customer.css">
-<!-- SERVER will get status, idService, brandName, modalName by POST method -->
-<form class="appointment-container" id="appointment-container" method="POST" action="api/make_appointment.php">
-    <input type="hidden" name="status" value="making-appointment">
-    <input type="hidden" name="idService" value="">
-    <input type="hidden" name="brandName" value="">
-    <input type="hidden" name="modalName" value="">
-    <input type="hidden" name="date" value="">
-    <input type="hidden" name="time" value="">
+<link rel="stylesheet" href="../public/css/appointment.css">
+<div class="appointment-container">
     <!-- Header area -->
     <div class="banner-container">
         <h1 class="font-oswald" style="margin: 0px;">Borang JanjiTemu</h1>
@@ -35,123 +28,140 @@ $softwareList = $allServices['software'] ?? [];
             <use href="../public/icons.svg#tool-icon"></use>
         </svg>
     </div>
-    <!-- Choices area -->
-    <label class="label">Masalah</label>
-    <!-- Search problem area -->
-    <div class="search-container">
-        <input class="search-bar" name="searching" type="search" placeholder="cth: Komputer saya sering crash...">
+    <!-- Switch page icon -->
+    <div class="switch-page">
         <svg class="icons">
-            <use href="../public/icons.svg#search-icon"></use>
+            <use href="../public/icons.svg#arrow-exchange-right-icon"></use>
         </svg>
+        <a href="dashboard.php?page=sejarah_janjitemu" class="font-oswald" style="margin: 0px;">Sejarah
+            JanjiTemu</a>
     </div>
-    <div class="services-container">
-        <!-- Hardware Services -->
-        <div class="hardware-services">
-            <label class="label">Hardware</label>
-            <?php foreach ($hardwareList as $subCat => $servicesList): ?>
-                <!-- Label of Sub-Categories -->
-                <div class="subCat">
-                    <label class="label" onclick="expandServices(this)">
-                        <svg class="icons chevron">
-                            <use href="../public/icons.svg#chevron-right-icon"></use>
-                        </svg>
-                        <span>
-                            <?= htmlspecialchars($subCat) ?>
-                        </span>
-                    </label>
-                </div>
-                <!-- Choices -->
-                <div class="activities-container">
-                    <?php foreach ($servicesList as $item): ?>
-                        <button type="button" class="activities-btn font-oswald"
-                            data-id="<?= htmlspecialchars($item['idService']) ?>" onclick="selectService(this)">
-                            • <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
-                        </button>
-                    <?php endforeach; ?>
-                </div>
-            <?php endforeach; ?>
-        </div>
-        <!-- Software Services -->
-        <div class="software-services">
-            <label class="label">Software</label>
-            <?php foreach ($softwareList as $subCat => $servicesList): ?>
-                <!-- Label of Sub-Categories -->
-                <div class="subCat">
-                    <label class="label" onclick="expandServices(this)">
-                        <svg class="icons chevron">
-                            <use href="../public/icons.svg#chevron-right-icon"></use>
-                        </svg>
-                        <span>
-                            <?= htmlspecialchars($subCat) ?>
-                        </span>
-                    </label>
-                </div>
-                <!-- Choices -->
-                <div class="activities-container">
-                    <?php foreach ($servicesList as $item): ?>
-                        <button type="button" class="activities-btn font-oswald"
-                            data-id="<?= htmlspecialchars($item['idService']) ?>" onclick="selectService(this)">
-                            • <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
-                        </button>
-                    <?php endforeach; ?>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-    <!-- Divice brand -->
-    <label class="label">Jenama</label>
-    <!-- Search brand & model area -->
-    <div class="search-container">
-        <input class="search-bar" name="searching" type="search" placeholder="cth: HP OMEN 16 Gaming">
-        <svg class="icons">
-            <use href="../public/icons.svg#search-icon"></use>
-        </svg>
-    </div>
-    <!-- Brands container -->
-    <div class="brands-container">
-
-    </div>
-    <!-- Divice modals -->
-    <label class="label">Modal</label>
-    <div class="modals-container">
-        <span class="label">----- Tiada jenama yang terpilih -----</span>
-    </div>
-    <!-- Date and time -->
-    <label class="label">Tarikh dan Masa</label>
-    <!-- Calendar -->
-    <div class="calendar">
-        <!-- Year, month and icons -->
-        <div class="year-month">
-            <svg class="icons chevron" id="prev-btn">
-                <use href="../public/icons.svg#chevron-left-icon"></use>
-            </svg>
-            <div id="year-month-label" class="label"></div>
-            <svg class="icons chevron" id="next-btn">
-                <use href="../public/icons.svg#chevron-right-icon"></use>
+    <!-- SERVER will get status, idService, brandName, modalName, date, time by POST method -->
+    <form class="appointment-form" id="appointment-container" method="POST" action="api/temp_save_appointment.php">
+        <input type="hidden" name="status" value="making-appointment">
+        <input type="hidden" name="idService" value="">
+        <input type="hidden" name="brandName" value="">
+        <input type="hidden" name="modalName" value="">
+        <input type="hidden" name="date" value="">
+        <input type="hidden" name="time" value="">
+        <!-- Choices area -->
+        <label class="label" style="color: #8a92a6; ">Masalah</label>
+        <!-- Search problem area -->
+        <div class="search-container">
+            <input class="search-bar" type="search" placeholder="cth: Komputer saya sering crash...">
+            <svg class="icons">
+                <use href="../public/icons.svg#search-icon"></use>
             </svg>
         </div>
-        <!-- Day name label -->
-        <div class="days-label">
-            <div class="label">Ahad</div>
-            <div class="label">Isnin</div>
-            <div class="label">Selasa</div>
-            <div class="label">Rabu</div>
-            <div class="label">Khamis</div>
-            <div class="label">Jumaat</div>
-            <div class="label">Sabtu</div>
+        <div class="services-container">
+            <!-- Hardware Services -->
+            <div class="hardware-services">
+                <label class="label">Hardware</label>
+                <?php foreach ($hardwareList as $subCat => $servicesList): ?>
+                    <!-- Label of Sub-Categories -->
+                    <div class="subCat">
+                        <label class="label" onclick="expandServices(this)">
+                            <svg class="icons chevron">
+                                <use href="../public/icons.svg#chevron-right-icon"></use>
+                            </svg>
+                            <span>
+                                <?= htmlspecialchars($subCat) ?>
+                            </span>
+                        </label>
+                    </div>
+                    <!-- Choices -->
+                    <div class="activities-container">
+                        <?php foreach ($servicesList as $item): ?>
+                            <button type="button" class="activities-btn font-oswald"
+                                data-id="<?= htmlspecialchars($item['idService']) ?>" onclick="selectService(this)">
+                                • <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <!-- Software Services -->
+            <div class="software-services">
+                <label class="label">Software</label>
+                <?php foreach ($softwareList as $subCat => $servicesList): ?>
+                    <!-- Label of Sub-Categories -->
+                    <div class="subCat">
+                        <label class="label" onclick="expandServices(this)">
+                            <svg class="icons chevron">
+                                <use href="../public/icons.svg#chevron-right-icon"></use>
+                            </svg>
+                            <span>
+                                <?= htmlspecialchars($subCat) ?>
+                            </span>
+                        </label>
+                    </div>
+                    <!-- Choices -->
+                    <div class="activities-container">
+                        <?php foreach ($servicesList as $item): ?>
+                            <button type="button" class="activities-btn font-oswald"
+                                data-id="<?= htmlspecialchars($item['idService']) ?>" onclick="selectService(this)">
+                                • <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
-        <!-- Date -->
-        <div class="date-container">
+        <!-- Divice brand -->
+        <label class="label" style="color: #8a92a6; ">Jenama</label>
+        <!-- Search brand & model area -->
+        <div class="search-container">
+            <input class="search-bar" type="search" placeholder="cth: HP OMEN 16 Gaming">
+            <svg class="icons">
+                <use href="../public/icons.svg#search-icon"></use>
+            </svg>
+        </div>
+        <!-- Brands container -->
+        <div class="brands-container">
 
         </div>
-        <!-- Time -->
-        <div class="time-container">
-
+        <!-- Divice modals -->
+        <label class="label" style="color: #8a92a6; ">Modal</label>
+        <div class="modals-container">
+            <span class="label">----- Tiada jenama yang terpilih -----</span>
         </div>
-    </div>
-    <button type="button" class="reset-btn label">Reset</button>
-    <button class="submit-btn" id="submitBtn" disabled>Selesai</button>
-</form>
+        <!-- Date and time -->
+        <label class="label" style="color: #8a92a6; ">Tarikh dan Masa</label>
+        <!-- Calendar -->
+        <div class="calendar">
+            <!-- Year, month and icons -->
+            <div class="year-month">
+                <svg class="icons chevron" id="prev-btn">
+                    <use href="../public/icons.svg#chevron-left-icon"></use>
+                </svg>
+                <div id="year-month-label" class="label"></div>
+                <svg class="icons chevron" id="next-btn">
+                    <use href="../public/icons.svg#chevron-right-icon"></use>
+                </svg>
+            </div>
+            <!-- Day name label -->
+            <div class="days-label">
+                <div class="label">Ahad</div>
+                <div class="label">Isnin</div>
+                <div class="label">Selasa</div>
+                <div class="label">Rabu</div>
+                <div class="label">Khamis</div>
+                <div class="label">Jumaat</div>
+                <div class="label">Sabtu</div>
+            </div>
+            <!-- Date -->
+            <div class="date-container">
+
+            </div>
+            <!-- Time -->
+            <div class="time-container">
+
+            </div>
+        </div>
+        <button type="button" class="reset-btn label">Reset</button>
+        <button class="submit-btn" id="submitBtn" disabled>Selesai</button>
+    </form>
+</div>
 <!-- JavaScripts -->
 <script>
     // Expand services panel
@@ -207,6 +217,7 @@ $softwareList = $allServices['software'] ?? [];
             element.style.color = '';
             element.style.transform = "scale(1)";
             element.style.boxShadow = "none";
+            sessionStorage.removeItem('savedIdService');
         } else {
             if (selectedServiceId) {
                 selectedServiceId.value = serviceId;
@@ -221,6 +232,7 @@ $softwareList = $allServices['software'] ?? [];
             element.style.color = '#f0c369';
             element.style.transform = "scale(0.95)";
             element.style.boxShadow = "inset 4px 4px 10px rgba(0,0,0,0.3)";
+            sessionStorage.setItem('savedIdService', serviceId);
         }
         checkFormValidity();
     }
@@ -237,6 +249,7 @@ $softwareList = $allServices['software'] ?? [];
             const data = await response.json();
             allBrandsModalsData = data;
             displayBrands();
+            restoreData();
         } catch (error) {
             console.log('Error! Please wait a while.', error);
         }
@@ -278,7 +291,8 @@ $softwareList = $allServices['software'] ?? [];
             element.style.border = '2px solid #474747';
             element.style.boxShadow = "";
             modalsContainer.innerHTML = htmlModalsContainer;
-
+            sessionStorage.removeItem('savedBrandName');
+            sessionStorage.removeItem('savedModalName');
         } else {
             if (selectedBrandName) {
                 selectedBrandName.value = brandName;
@@ -297,6 +311,8 @@ $softwareList = $allServices['software'] ?? [];
             element.style.border = '3px solid #f0c369';
             element.style.transform = "scale(0.95)";
             element.style.boxShadow = "0 0 15px 1px rgba(240, 195, 105, 0.3)";
+            sessionStorage.setItem('savedBrandName', brandName);
+            sessionStorage.removeItem('savedModalName');
             displayModals(brandName, currentForm);
         }
         checkFormValidity();
@@ -328,6 +344,7 @@ $softwareList = $allServices['software'] ?? [];
             element.style.color = '';
             element.style.transform = "scale(1)";
             element.style.boxShadow = "none";
+            sessionStorage.removeItem('savedModalName');
         } else {
             if (selectedModalName) {
                 selectedModalName.value = modalName;
@@ -342,6 +359,7 @@ $softwareList = $allServices['software'] ?? [];
             element.style.color = '#f0c369';
             element.style.transform = "scale(0.95)";
             element.style.boxShadow = "inset 4px 4px 10px rgba(0,0,0,0.3)";
+            sessionStorage.setItem('savedModalName', modalName);
         }
         checkFormValidity();
     }
@@ -530,6 +548,40 @@ $softwareList = $allServices['software'] ?? [];
         }
     }
 
+    // Restore saved data when back from pilih_juruteknik.php
+    function restoreData() {
+        const savedServiceId = sessionStorage.getItem('savedIdService');
+        const savedBrandName = sessionStorage.getItem('savedBrandName');
+        const savedModalName = sessionStorage.getItem('savedModalName');
+        const currentForm = document.getElementById('appointment-container');
+        if (savedServiceId) {
+            const serviceBtn = document.querySelector(`.activities-btn[data-id="${savedServiceId}"]`);
+            if (serviceBtn) {
+                selectService(serviceBtn);
+                const container = serviceBtn.closest('.activities-container');
+                if (container) {
+                    const subCatLabel = container.previousElementSibling.querySelector('.label');
+                    if (subCatLabel) {
+                        expandServices(subCatLabel);
+                    }
+                }
+            }
+        }
+        if (savedBrandName) {
+            const brandBtn = document.querySelector(`.brand[data-brand= "${savedBrandName}"]`);
+            if (brandBtn) {
+                selectBrand(brandBtn);
+                if (savedModalName) {
+                    setTimeout(() => {
+                        const modalBtn = document.querySelector(`.modal[data-modal= "${savedModalName}"]`);
+                        if (modalBtn) {
+                            selectModal(modalBtn);
+                        }
+                    }, 50);
+                }
+            }
+        }
+    }
 
     // Call the getData() function after all html rendering successful
     document.addEventListener("DOMContentLoaded", getData, { once: true });

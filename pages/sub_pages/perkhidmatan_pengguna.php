@@ -1,4 +1,5 @@
-<?php if (session_status() === PHP_SESSION_NONE) {
+<?php
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (
@@ -34,7 +35,7 @@ $softwareList = $allServices['software'] ?? [];
             <div class="subService-container">
                 <!-- Label of Sub-Categories -->
                 <div class="subCat">
-                    <label class="label" onclick="expandServices(this)">
+                    <label class="label">
                         <span>
                             <?= htmlspecialchars($subCat) ?>
                         </span>
@@ -44,7 +45,7 @@ $softwareList = $allServices['software'] ?? [];
                 <div class="activities-container">
                     <?php foreach ($servicesList as $item): ?>
                         <button type="button" class="activities-btn font-oswald"
-                            data-id="<?= htmlspecialchars($item['idService']) ?>" onclick="selectService(this)">
+                            data-id="<?= htmlspecialchars($item['idService']) ?>">
                             <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
                         </button>
                     <?php endforeach; ?>
@@ -59,7 +60,7 @@ $softwareList = $allServices['software'] ?? [];
             <div class="subService-container">
                 <!-- Label of Sub-Categories -->
                 <div class="subCat">
-                    <label class="label" onclick="expandServices(this)">
+                    <label class="label">
                         <span>
                             <?= htmlspecialchars($subCat) ?>
                         </span>
@@ -69,7 +70,7 @@ $softwareList = $allServices['software'] ?? [];
                 <div class="activities-container">
                     <?php foreach ($servicesList as $item): ?>
                         <button type="button" class="activities-btn font-oswald"
-                            data-id="<?= htmlspecialchars($item['idService']) ?>" onclick="selectService(this)">
+                            data-id="<?= htmlspecialchars($item['idService']) ?>">
                             <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
                         </button>
                     <?php endforeach; ?>

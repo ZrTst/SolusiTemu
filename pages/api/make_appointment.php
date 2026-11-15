@@ -5,8 +5,12 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_POST['status']) || $_POST['status'] !== "making-appointment") {
-    //For someone who not supposed to at here
+if (
+    !isset($_POST['status']) ||
+    $_POST['status'] !== "making-appointment" ||
+    !isset($_SESSION['logged_in']) ||
+    $_SESSION['logged_in'] !== true
+) {
     http_response_code(401);
     //Pull the page 401.html without changing URL
     include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');

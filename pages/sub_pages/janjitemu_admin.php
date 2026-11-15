@@ -1,4 +1,5 @@
-<?php if (session_status() === PHP_SESSION_NONE) {
+<?php
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (
@@ -12,7 +13,6 @@ if (
     exit;
 }
 
-$userId = isset($_SESSION['user_id']) ? trim($_SESSION['user_id']) : '';
 $allAppointment = db_getAllAppointment($pdo);
 ?>
 <link rel="stylesheet" href="../public/css/appointment.css">

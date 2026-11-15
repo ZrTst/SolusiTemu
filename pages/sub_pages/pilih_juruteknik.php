@@ -72,7 +72,7 @@ if (!$availableTechnicans || !is_array($availableTechnicans)) {
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
-            <div class="no-technicans-notice">
+            <div class="notice">
                 <svg class="icons-notice" style="width: 64px; height: 64px; fill: var(--text);">
                     <use href="../public/icons.svg#alert-icon"></use>
                 </svg>

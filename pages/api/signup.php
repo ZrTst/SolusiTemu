@@ -5,7 +5,12 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_POST['status']) || $_POST['status'] !== 'registering') {
+if (
+    !isset($_SESSION['logged_in']) ||
+    $_SESSION['logged_in'] !== true ||
+    !isset($_POST['status']) ||
+    $_POST['status'] !== 'registering'
+) {
     //For someone who haven't login and unauthorized 
     http_response_code(401);
     //Pull the page 401.html without changing URL

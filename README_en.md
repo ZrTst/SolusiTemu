@@ -61,10 +61,10 @@ Every time a user submits form data, the data flow is processed through 3 phases
 ### 💾 Phase 3: Core Business Logic (CRUD Operations)
 - [x] Update with new information (own profile) (Customer, Technician).
 - [x] Add New Appointment Form (Customer).
-- [ ] Search & Display active Services and Technicians (Customer).
-- [ ] Appointment History Table display with isolated data access rights control (Customer, Technician, Admin).
-- [ ] Appointment Approval & Allocation features (Technician, Admin).
-- [ ] Global administrative operations: `delete`, `update`, `add` for Appointment/User/Service entities (Admin only).
+- [x] Search & Display active Services and Technicians (Customer).
+- [x] Appointment History Table display with isolated data access rights control (Customer, Technician, Admin).
+- [x] Appointment Approval & Allocation features (Technician, Admin).
+- [x] Global administrative operations: `delete`, `update`, `add` for Appointment/User/Service entities (Admin only).
 - [ ] Bulk Data Import feature from external files (Admin).
 - [ ] Formatted Report Generation Output feature (Admin).
 

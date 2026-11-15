@@ -61,10 +61,10 @@ Setiap kali pengguna menghantar data borang (Form Submission), aliran data dipro
 ### 💾 Fasa 3: Logik Perniagaan Teras (CRUD Operations)
 - [x] Kemas kini dengan maklumat baharu (profil sendiri) (Pelanggan, Juruteknik).   
 - [x] Borang Tambah Janjitemu Baharu (Pelanggan).
-- [ ] Carian & Paparan Perkhidmatan dan Juruteknik yang aktif (Pelanggan).
-- [ ] Paparan Jadual Sejarah Janjitemu dengan kawalan hak akses data terasing (Pelanggan, Juruteknik, Admin).
-- [ ] Fungsi Kelulusan & Pengagihan Janjitemu (Juruteknik, Admin).
-- [ ] Operasi pentadbiran global: `delete`, `update`, `add` untuk entiti Janjitemu/Pengguna/Perkhidmatan (Admin sahaja).
+- [x] Carian & Paparan Perkhidmatan dan Juruteknik yang aktif (Pelanggan).
+- [x] Paparan Jadual Sejarah Janjitemu dengan kawalan hak akses data terasing (Pelanggan, Juruteknik, Admin).
+- [x] Fungsi Kelulusan & Pengagihan Janjitemu (Juruteknik, Admin).
+- [x] Operasi pentadbiran global: `delete`, `update`, `add` untuk entiti Janjitemu/Pengguna/Perkhidmatan (Admin sahaja).
 - [ ] Fungsi Import Data pukal daripada fail luaran (Admin).
 - [ ] Fungsi Output Penjanaan Laporan berformat (Admin).
 

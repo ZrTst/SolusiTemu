@@ -218,7 +218,7 @@ function db_updateData($pdo, $userId, $dataType, $dataChange)
     } elseif ($prefix === 'J' || $prefix === 'A') {
         $tablename = 'STAF';
         $idtype = 'ID_S';
-        $allowedColumns = ['Nama_S', 'Pswd_S', 'No_Tel_S'];
+        $allowedColumns = ['Nama_S', 'Pswd_S', 'No_Tel_S', 'Gbr_S'];
     } else {
         return false; //Prevent invalid input
     }
@@ -354,11 +354,9 @@ function db_addAppointment($pdo, $userId, $staffId, $idService, $brandName, $mod
 // Function to get available technicans
 function db_getAvailableTechnicans($pdo, $timeDate)
 {
-
     if (empty($timeDate)) {
         return [];
     }
-
     try {
         $sql = "SELECT s.ID_S, s.Nama_S, s.No_Tel_S, s.Gbr_S 
                 FROM staf s 
@@ -377,7 +375,7 @@ function db_getAvailableTechnicans($pdo, $timeDate)
     }
 }
 
-// Function to get customers' history appointment
+// Function to get customers' history appointments
 function db_getHistoryAppointment($pdo, $userId)
 {
     if ($userId === '' || empty($userId)) {
@@ -404,7 +402,7 @@ function db_getHistoryAppointment($pdo, $userId)
     }
 }
 
-// Function to get all customers' history appointment
+// Function to get all appointments
 function db_getAllAppointment($pdo)
 {
     try {
@@ -426,4 +424,161 @@ function db_getAllAppointment($pdo)
         return [];
     }
 }
+
+// Function to get assigned appointments
+function db_getSelfAppointment($pdo, $userId)
+{
+    if ($userId === '' || empty($userId)) {
+        return [];
+    }
+    $trimUserId = trim($userId);
+    try {
+        $sql = 'SELECT jt.*, p.Nama_P, pk.Nama_PK 
+            FROM janjitemu jt
+            INNER JOIN pelanggan p ON jt.ID_P = p.ID_P
+            INNER JOIN perkhidmatan pk ON jt.ID_PK = pk.ID_PK
+            WHERE ID_S = ?
+            ORDER BY Tarikh_Masa ASC';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$trimUserId]);
+        $history = $stmt->fetchAll();
+        if ($history !== '') {
+            return $history;
+        }
+        return [];
+    } catch (PDOException $e) {
+        error_log("Database query failed in db_getSelfAppointment: " . $e->getMessage());
+        return [];
+    }
+}
+
+// Function to update service
+function db_updateService($pdo, $data)
+{
+    $trimData = trim($data);
+
+    try {
+        $pdo->beginTransaction();
+        $stmtCheckId = $pdo->query("SELECT ID_PK FROM `perkhidmatan` ORDER BY ID_PK DESC LIMIT 1 FOR UPDATE");
+        $lastRow = $stmtCheckId->fetch();
+
+        if ($lastRow) {
+            $lastId = $lastRow['ID_PK'];
+            $numberId = substr($lastId, 2);
+            $nextNumber = (int) $numberId + 1;
+            $newId = 'PK' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        } else {
+            $newId = 'PK001';
+        }
+
+        $sql = 'INSERT INTO `perkhidmatan` (`ID_PK` , `Nama_PK`) VALUES (?, ?)';
+        $stmt = $pdo->prepare($sql);
+        $success = $stmt->execute([$newId, $trimData]);
+        if ($success) {
+            $pdo->commit();
+        }
+        return $success;
+    } catch (PDOException $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack(); // Undo operation
+        }
+        error_log("Database query failed in db_updateService: " . $e->getMessage());
+        return 'error';
+    }
+}
+
+// Function to get all user
+function db_getAllUser($pdo)
+{
+    try {
+        // Customers'
+        $stmtCustomer = $pdo->query('
+        SELECT ID_P, Nama_P, No_Tel_P, Alamat 
+        FROM pelanggan 
+        WHERE No_Tel_P NOT LIKE "[X]%"');
+        $customers = $stmtCustomer->fetchAll();
+
+        // Staffs'
+        $stmtStaff = $pdo->query('
+        SELECT ID_S, Nama_S, No_Tel_S, Peranan, Gbr_S
+        FROM staf
+        WHERE No_Tel_S NOT LIKE "[X]%"');
+        $staffs = $stmtStaff->fetchAll();
+
+        return [
+            'customer' => $customers,
+            'staff' => $staffs
+        ];
+    } catch (PDOException $e) {
+        error_log("Database query failed in db_getAllUser: " . $e->getMessage());
+        return 'error';
+    }
+}
+
+// Function admin to add new user
+function db_addUser($pdo, $uName, $uPass, $uNum, $info, $uType)
+{
+    //Check if the name of password is empty or not
+    if (trim($uName) === '' || trim($uPass) === '') {
+        return 'invalid';
+    }
+
+    // Check the strength of the password
+    $passwordPattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/';
+    if (!preg_match($passwordPattern, $uPass)) {
+        return 'weak_pass';
+    }
+    if ($uType === 'customer') {
+        $tablename = 'pelanggan';
+        $idtype = 'ID_P';
+        $prefix = 'P';
+    } elseif ($uType === 'staff') {
+        $tablename = 'staf';
+        $idtype = 'ID_S';
+        $prefix = (strtolower(trim($info)) === 'admin') ? 'A' : 'J';
+    } else {
+        return false; //Prevent invalid input
+    }
+
+    try {
+        $pdo->beginTransaction(); //To prevent Id duplicate when more then one people register together
+
+        // ===== Step 1 : Auto-incrementing User ID =====
+        $stmtCheckId = $pdo->prepare("SELECT `{$idtype}` FROM `{$tablename}` WHERE `{$idtype}` LIKE ? ORDER BY `{$idtype}` DESC LIMIT 1 FOR UPDATE");
+        $stmtCheckId->execute([$prefix . '%']);
+        $lastRow = $stmtCheckId->fetch();
+
+        if ($lastRow) {
+            $lastId = $lastRow[$idtype];
+            $numberId = substr($lastId, 1);
+            $nextNumber = (int) $numberId + 1;
+            $newId = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        } else {
+            $newId = $prefix . '001';
+        }
+
+        // == Step 2 : Hash the password
+        $hashed_pass = password_hash($uPass, PASSWORD_DEFAULT);
+
+        // ===== Step 3 : Insert data into the database =====
+        if ($tablename === 'staf') {
+            $sql = "INSERT INTO `staf` (`ID_S`, `Nama_S`, `Pswd_S`, `No_Tel_S`, `Peranan`) VALUES (?,?,?,?,?)";
+        } else {
+            $sql = "INSERT INTO `pelanggan` (`ID_P`, `Nama_P`, `Pswd_P`, `No_Tel_P`, `Alamat`) VALUES (?,?,?,?,?)";
+        }
+        $stmt = $pdo->prepare($sql);
+        $success = $stmt->execute([$newId, $uName, $hashed_pass, $uNum, $info]);
+        if ($success) {
+            $pdo->commit();
+        }
+        return $success;
+    } catch (PDOException $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack(); // Undo operation
+        }
+        error_log("Fail insert data into database at db_addUser: " . $e->getMessage());
+        return false;
+    }
+}
+
 ?>

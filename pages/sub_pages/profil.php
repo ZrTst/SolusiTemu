@@ -14,6 +14,7 @@ if (
 }
 
 $user = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : [];
+$pfp = $user['Gbr_S'] ?? '';
 $phone = $user['No_Tel_P'] ?? $user['No_Tel_S'] ?? '';
 // Displays phone numbers with the national numbering plan
 if (trim($phone) !== '') {
@@ -27,13 +28,23 @@ if (trim($phone) !== '') {
 }
 $role = $user['Peranan'] ?? '';
 $dataToChange = trim($_POST['data_type'] ?? '');
+$is_staff = isset($user['ID_S']);
 ?>
 
 <!-- SERVER will get status(L23), data_type(L28), data_change(L88) by POST method -->
 <form class="profile-container" id="profile-container" method="POST" action="api/update_profile.php">
     <input type="hidden" name="status" value="editing-profile">
     <div class="profile-picture-container">
-        <div class="profile-picture"></div>
+        <div class="photo-container">
+            <?php if ($is_staff === true):
+                $pfp_src = !empty($pfp) ? '../images/uploads/' . htmlspecialchars($pfp) : '../images/user_pfp.jpeg';
+                ?>
+                <img class="profile-picture" src="<?= htmlspecialchars($pfp_src) ?>"
+                    alt="<?= htmlspecialchars($user['ID_S'] ?? '') ?>">
+            <?php elseif ($is_staff === false): ?>
+                <img src='../images/user_pfp.jpeg' class="profile-picture">
+            <?php endif; ?>
+        </div>
     </div>
     <!-- Hidden field -->
     <input type="hidden" id="data-type" name="data_type" value="">
@@ -92,7 +103,7 @@ $dataToChange = trim($_POST['data_type'] ?? '');
     <!-- Update information form -->
     <div class="change-data-overlay" id="change-data-overlay" style="display: none;">
         <div class="change-data-form">
-            <div class="form-header font-oswald" style="font-size: 40px;">
+            <div class="form-header font-barlowcondensed" style="font-size: 40px;">
                 <span>KemasKini Maklumat</span>
                 <svg class="icons" id="minimizeicon-profile">
                     <use href="../public/icons.svg#minimize-icon"></use>

@@ -352,7 +352,7 @@ function db_addAppointment($pdo, $userId, $staffId, $idService, $brandName, $mod
 }
 
 // Function to get available technicans
-function db_getAvailableTechnicans($pdo, $timeDate)
+function db_getAvailableTechnicians($pdo, $timeDate)
 {
     if (empty($timeDate)) {
         return [];
@@ -523,6 +523,9 @@ function db_addUser($pdo, $uName, $uPass, $uNum, $info, $uType)
         return 'invalid';
     }
 
+    if (db_checkName($pdo, $uName) !== false) {
+        return 'name_used';
+    }
     // Check the strength of the password
     $passwordPattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/';
     if (!preg_match($passwordPattern, $uPass)) {

@@ -1,0 +1,200 @@
+/* Admin Report page */
+/* Report table */
+.report-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    align-items: start;
+    align-content: start;
+    gap: 20px;
+    width: 100%;
+    height: calc(100vh - 40px);
+    padding: 20px;
+    overflow-y: auto;
+
+    .radio-group {
+        grid-column: span 2;
+    }
+
+    .search-container {
+        grid-column: span 1/-1;
+    }
+
+    .appointment-list-container .data-label,
+    .appointment-list-container .label {
+        grid-column: span 1;
+        display: grid;
+        grid-template-columns: 65px 0.9fr 1.8fr 1fr 1.1fr 130px 1.6fr;
+        gap: 12px;
+        text-decoration: none;
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid var(--border-blue);
+        transition: all 0.2s ease;
+    }
+
+    .appointment-list-container button {
+        grid-column: span 1/-1;
+        margin-top: 30px !important;
+    }
+
+    .appointment-list-container .icons:hover {
+        color: var(--icon) !important;
+    }
+}
+
+.date-search-container {
+    grid-column: span 1;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+}
+
+.date-container {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 16px;
+    padding: 14px 22px;
+
+    .date-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .label-text {
+        font-size: 16px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--text);
+        opacity: 0.75;
+        user-select: none;
+    }
+
+    input[type="date"] {
+        background: rgba(0, 0, 0, 0.25);
+        color: var(--text);
+        font-size: 16px;
+        border: 2px solid var(--gold-bright);
+        border-radius: 8px;
+        padding: 8px 12px;
+        outline: none;
+        transition: all 0.25s ease;
+
+        &:hover,
+        &:focus {
+            background: rgba(0, 0, 0, 0.45);
+            box-shadow: 0 0 10px color-mix(in srgb, var(--gold-bright) 40%, transparent);
+        }
+
+        &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            margin-left: 6px;
+            filter: invert(100%);
+            opacity: 0.85;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+
+            &:hover {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+    }
+
+    .filter-btn {
+        background: var(--gold-bright);
+        color: var(--text-caramel);
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 24px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            filter: brightness(1.12);
+            transform: translateY(-1px);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+.reset-btn {
+    grid-column: span 1/-1;
+    background: transparent;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    width: 25%;
+    border-radius: 8px;
+    padding: 8.5px 18px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: all 0.25s ease;
+
+    &:hover {
+        opacity: 1;
+        border-color: var(--gold-bright);
+        color: var(--gold-bright);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
+}
+
+.default-notice {
+    grid-column: span 1/-1;
+    display: flex;
+    font-size: 30px;
+    justify-content: center;
+    align-items: center;
+    margin: 30px;
+    opacity: 0.7;
+}
+
+/* ========== Server Log Area ========== */
+.log-container {
+    grid-column: span 1/-1;
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: 1fr;
+
+}
+
+/* Overflow Slider */
+.report-container::-webkit-scrollbar {
+    width: 8px;
+    right: 1%;
+}
+
+.report-container::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 20px;
+}
+
+.report-container::-webkit-scrollbar-thumb {
+    background-color: var(--gold-bright);
+    border-radius: 20px;
+    border: 2px solid var(--panel);
+    transition: background-color 0.2s;
+}
+
+.report-container::-webkit-scrollbar-thumb:hover {
+    background-color: var(--gold);
+}

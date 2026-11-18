@@ -31,6 +31,7 @@ All business pages are called dynamically using `include` inside `dashboard.php`
     └── css/            # Page-specific styles
     └── data/           # Device brand and model data
 ├── images/             # System image files
+    └── uploads/        # Uploaded user profile picture 
 ```
 
 ---

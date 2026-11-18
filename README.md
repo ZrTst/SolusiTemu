@@ -31,6 +31,7 @@ Semua halaman perniagaan dipanggil secara dinamik menggunakan `include` di dalam
     └── css/            # Gaya khusus halaman
     └── data/           # Data jenama dan model peranti
 ├── images/             # Fail imej sistem
+    └── uploads/        # Gambar profil pengguna yang dimuat naik
 ```
 
 ---

@@ -19,10 +19,10 @@ $modalName = $tempData['modalName'];
 $time = $tempData['time'];
 $date = $tempData['date'];
 // Combine date and time
-$combinedDateTime = $date . ' ' . $time . ':00';
-$availableTechnicans = db_getAvailableTechnicans($pdo, $combinedDateTime);
-if (!$availableTechnicans || !is_array($availableTechnicans)) {
-    $availableTechnicans = [];
+$combinedDateTime = $date . ' ' . $time;
+$availableTechnicians = db_getAvailableTechnicians($pdo, $combinedDateTime);
+if (!$availableTechnicians || !is_array($availableTechnicians)) {
+    $availableTechnicians = [];
 }
 
 ?>
@@ -38,16 +38,16 @@ if (!$availableTechnicans || !is_array($availableTechnicans)) {
     <input type="hidden" name="idJuruteknik" value="">
     <!-- Header area -->
     <div class="banner-container">
-        <h1 class="font-oswald" style="margin: 0px;">Langkah Terakhir: Pilih Juruteknik</h1>
+        <h1 class="font-barlowcondensed" style="margin: 0px;">Langkah Terakhir: Pilih Juruteknik</h1>
         <svg class="icons">
             <use href="../public/icons.svg#tool-icon"></use>
         </svg>
     </div>
     <!-- Display technicans -->
     <div class="technicans-container">
-        <?php if (!empty($availableTechnicans) && is_array($availableTechnicans)): ?>
-            <?php foreach ($availableTechnicans as $technican): ?>
-                <?php $phone = $technican['No_Tel_S'] ?? '';
+        <?php if (!empty($availableTechnicians) && is_array($availableTechnicians)): ?>
+            <?php foreach ($availableTechnicians as $technician): ?>
+                <?php $phone = $technician['No_Tel_S'] ?? '';
                 // Displays phone numbers with the national numbering plan
                 if (trim($phone) !== '') {
                     if (substr($phone, 0, 3) === '011' || substr($phone, 0, 3) === '015') {
@@ -58,12 +58,17 @@ if (!$availableTechnicans || !is_array($availableTechnicans)) {
                 } else {
                     $displayUsePhoneNum = '';
                 } ?>
-                <div class="technican" data-id-technican="<?= htmlspecialchars($technican['ID_S'] ?? '') ?>">
-                    <div class="photo-container"><?= htmlspecialchars($technican['Gbr_S'] ?? '') ?></div>
+                <div class="technican" data-id-technican="<?= htmlspecialchars($technician['ID_S'] ?? '') ?>">
+                    <div class="photo-container">
+                        <?php $pfp_src = !empty($technician['Gbr_S']) ? '../images/uploads/' . htmlspecialchars($technician['Gbr_S']) : '../images/user_pfp.jpeg';
+                        ?>
+                        <img class="photo-container" src="<?= htmlspecialchars($pfp_src) ?>"
+                            alt="<?= htmlspecialchars($technician['Nama_S']) ?>">
+                    </div>
                     <div class="info-container">
                         <div class="info label">Nama juruteknik: </div>
                         <div class="data label">
-                            <?= htmlspecialchars($technican['Nama_S'] ?? '') ?>
+                            <?= htmlspecialchars($technician['Nama_S'] ?? '') ?>
                         </div>
                         <div class="info label">Nombor Telefon juruteknik: </div>
                         <div class="data label"><?= htmlspecialchars($displayUsePhoneNum ?? '') ?></div>

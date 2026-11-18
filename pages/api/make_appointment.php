@@ -1,6 +1,6 @@
 <?php
-// api/update_profile.php
-// Update user data 
+// api/make_appointment.php
+// User do appointment
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -12,7 +12,6 @@ if (
     $_SESSION['logged_in'] !== true
 ) {
     http_response_code(401);
-    //Pull the page 401.html without changing URL
     include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
     exit;
 }

@@ -45,7 +45,7 @@ $randomPass = generatePass(8);
 <div class="users-container">
     <!-- Header area -->
     <div class="banner-container">
-        <h1 class="font-oswald" style="margin: 0px;">Senarai pengguna dalam Sistem SolusiTemu</h1>
+        <h1 class="font-barlowcondensed" style="margin: 0px;">Senarai pengguna dalam Sistem SolusiTemu</h1>
         <svg class="icons">
             <use href="../public/icons.svg#setting-icon"></use>
         </svg>
@@ -62,7 +62,7 @@ $randomPass = generatePass(8);
         <!-- Name List -->
         <div class="list-container">
             <!-- Switch customers or staffs -->
-            <div class="radio-group font-oswald">
+            <div class="radio-group font-barlowcondensed">
                 <label class="radio-pill">
                     <input type="radio" name="user" value="all" checked>
                     <span>Semua</span>
@@ -116,6 +116,14 @@ $randomPass = generatePass(8);
                     </svg>
                 </div>
             </div>
+            <!-- No matched result container -->
+            <div class="notice" style="display: none;">
+                <svg class="icons-notice" style="width: 64px; height: 64px; fill: var(--text);">
+                    <use href="../public/icons.svg#alert-icon"></use>
+                </svg>
+                <h2>Tiada pengguna yang dicari</h2>
+                <p>Sila cuba kata kunci lain :)</p>
+            </div>
         </div>
         <!-- Right side profil details -->
         <form class="user-profile" method="POST" action="api/update_profile.php">
@@ -148,7 +156,7 @@ $randomPass = generatePass(8);
                         $pfp_src = ($is_staff && !empty($u['Gbr_S'])) ? '../images/uploads/' . htmlspecialchars($u['Gbr_S']) : '../images/user_pfp.jpeg';
                         ?>
                         <div class="profile-picture-container">
-                            <img src='../images/uploads/<?= $u['Gbr_S'] ?>' class="profile-picture">
+                            <img src='<?= htmlspecialchars($pfp_src) ?>' class="profile-picture">
                         </div>
                     <?php elseif ($is_staff === false): ?>
                         <div class="profile-picture-container">
@@ -471,4 +479,48 @@ $randomPass = generatePass(8);
         });
     }
     disableRequired();
+
+    // Search function
+    const searchBar = document.querySelector('.search-bar');
+    const noticeContainer = document.querySelector('.notice');
+
+    if (searchBar) {
+        searchBar.addEventListener('input', function () {
+            const keyword = this.value.trim().toLowerCase();
+            const listFilter = document.querySelector('input[name="user"]:checked')?.value || 'all';
+            let showName = false;
+
+            // Staffs and Customers container
+            document.querySelectorAll('.staff-container, .customer-container').forEach(section => {
+                const isCustomerSection = section.classList.contains('customer-container');
+                const isAllowedByFilter = (listFilter === 'all') ||
+                    (listFilter === 'customer' && isCustomerSection) ||
+                    (listFilter === 'staff' && !isCustomerSection);
+                const userList = section.querySelectorAll(':scope > .data-label:not(:last-child)');
+                let showSection = false;
+
+                userList.forEach(user => {
+                    const userName = user.textContent.trim().toLowerCase();
+                    const isUserNameMatch = keyword === '' || userName.includes(keyword);
+
+                    if (isUserNameMatch) {
+                        user.style.display = '';
+                        showSection = true;
+                        if (isAllowedByFilter) {
+                            showName = true;
+                        }
+                    } else {
+                        user.style.display = 'none';
+                    }
+                });
+
+                section.style.display = (isAllowedByFilter && (keyword === '' || showSection)) ? '' : 'none';
+            });
+
+            if (noticeContainer) {
+                noticeContainer.style.display = (keyword !== '' && !showName) ? 'flex' : 'none';
+            }
+        });
+    }
+
 </script>

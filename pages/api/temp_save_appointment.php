@@ -21,7 +21,6 @@ require_once __DIR__ . '/../../private_core/config.php';
 require_once __DIR__ . '/../../private_core/functions.php';
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    $timeDate = $date . ' ' . $time . ':00';
     $_SESSION['temp_data'] = [
         'idService' => $_POST['idService'] ?? '',
         'brandName' => $_POST['brandName'] ?? '',

@@ -23,7 +23,7 @@ $softwareList = $allServices['software'] ?? [];
 <div class="services-container">
     <!-- Header area -->
     <div class="banner-container">
-        <h1 class="font-oswald" style="margin: 0px;">Skop Perkhidmatan </h1>
+        <h1 class="font-barlowcondensed" style="margin: 0px;">Skop Perkhidmatan </h1>
         <svg class="icons">
             <use href="../public/icons.svg#setting-icon"></use>
         </svg>
@@ -50,7 +50,7 @@ $softwareList = $allServices['software'] ?? [];
                 <!-- Choices -->
                 <div class="activities-container">
                     <?php foreach ($servicesList as $item): ?>
-                        <button type="button" class="activities-btn font-oswald"
+                        <button type="button" class="activities-btn font-barlowcondensed"
                             data-id="<?= htmlspecialchars($item['idService']) ?>"
                             title="<?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>">
                             <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
@@ -60,7 +60,7 @@ $softwareList = $allServices['software'] ?? [];
                     <div class="inline-add-wrapper" data-main-cat="Hardware" data-sub-cat="
                         <?= htmlspecialchars($subCat) ?>">
 
-                        <button type="button" class="activities-btn font-oswald add-trigger-btn"
+                        <button type="button" class="activities-btn font-barlowcondensed add-trigger-btn"
                             onclick="openInlineAdd(this)">
                             <svg class="icons" style="width: 16px; height: 16px;">
                                 <use href="../public/icons.svg#plus-icon"></use>
@@ -72,7 +72,7 @@ $softwareList = $allServices['software'] ?? [];
                             <input type="hidden" name="status" value="updating-service">
                             <input type="hidden" name="main-cat" value="Hardware">
                             <input type="hidden" name="sub-cat" value="<?= htmlspecialchars($subCat) ?>">
-                            <input type="text" name="data-change" class="inline-input font-oswald"
+                            <input type="text" name="data-change" class="inline-input font-barlowcondensed"
                                 placeholder="Nama aktiviti..." autocomplete="off" required>
                             <!-- Save button -->
                             <button type="submit" class="inline-action-btn confirm" title="Simpan">✓</button>
@@ -101,7 +101,7 @@ $softwareList = $allServices['software'] ?? [];
                 <!-- Choices -->
                 <div class="activities-container">
                     <?php foreach ($servicesList as $item): ?>
-                        <button type="button" class="activities-btn font-oswald"
+                        <button type="button" class="activities-btn font-barlowcondensed"
                             data-id="<?= htmlspecialchars($item['idService']) ?>"
                             title="<?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>">
                             <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
@@ -111,7 +111,7 @@ $softwareList = $allServices['software'] ?? [];
                     <div class="inline-add-wrapper" data-main-cat="Software" data-sub-cat="
                         <?= htmlspecialchars($subCat) ?>">
 
-                        <button type="button" class="activities-btn font-oswald" onclick="openInlineAdd(this)">
+                        <button type="button" class="activities-btn font-barlowcondensed" onclick="openInlineAdd(this)">
                             <svg class="icons" style="width: 16px; height: 16px;">
                                 <use href="../public/icons.svg#plus-icon"></use>
                             </svg>
@@ -122,7 +122,7 @@ $softwareList = $allServices['software'] ?? [];
                             <input type="hidden" name="status" value="updating-service">
                             <input type="hidden" name="main-cat" value="Software">
                             <input type="hidden" name="sub-cat" value="<?= htmlspecialchars($subCat) ?>">
-                            <input type="text" name="data-change" class="inline-input font-oswald"
+                            <input type="text" name="data-change" class="inline-input font-barlowcondensed"
                                 placeholder="Nama aktiviti..." autocomplete="off" required>
                             <!-- Save button -->
                             <button type="submit" class="inline-action-btn confirm" title="Simpan">✓</button>
@@ -145,10 +145,10 @@ $softwareList = $allServices['software'] ?? [];
     </div>
     <!-- New service fill form -->
     <div class="new-subCat-service-container">
-        <label class="label font-oswald" style="font-size: 30px;">Tambah perkhidmatan Baharu</label>
+        <label class="label font-barlowcondensed" style="font-size: 30px;">Tambah perkhidmatan Baharu</label>
         <form class="subService-container" method="POST" action="api/update_service.php">
             <input type="hidden" name="status" value="updating-service">
-            <div class="radio-group font-oswald">
+            <div class="radio-group font-barlowcondensed">
                 <label class="radio-pill">
                     <input type="radio" name="main-cat" value="Hardware" checked>
                     <span>Hardware</span>
@@ -159,13 +159,14 @@ $softwareList = $allServices['software'] ?? [];
                 </label>
             </div>
             <div class="subCat" style="justify-content: space-between; width: 80%; gap: 10px;">
-                <input type="text" name="sub-cat" class="inline-input font-oswald"
+                <input type="text" name="sub-cat" class="inline-input font-barlowcondensed"
                     placeholder="Nama Sub-Kategori (cth: GPU)..." autocomplete="off" required
                     style="font-size: 22px; border-bottom: 1px solid var(--gold-bright); flex: 1;">
             </div>
             <div class="activities-container">
-                <input type="text" name="data-change" class="inline-input font-oswald" placeholder="Aktiviti pertama..."
-                    autocomplete="off" style="border-bottom: 1px solid var(--gold-bright);" required>
+                <input type="text" name="data-change" class="inline-input font-barlowcondensed"
+                    placeholder="Aktiviti pertama..." autocomplete="off"
+                    style="border-bottom: 1px solid var(--gold-bright);" required>
             </div>
             <button class="submit-btn" style="margin: 0px;">Tambah</button>
         </form>
@@ -239,8 +240,11 @@ $softwareList = $allServices['software'] ?? [];
                 });
 
                 section.style.display = (keyword === '' || hasVisibleCard) ? '' : 'none';
-                noticeContainer.style.display = 'flex';
+                if (noticeContainer) {
+                    noticeContainer.style.display = (keyword !== '' && !hasVisibleCard) ? 'flex' : 'none';
+                }
             });
+
         });
     }
 </script>

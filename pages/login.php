@@ -135,8 +135,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     </div>
     <!--Login Form-->
     <div class="verification-container">
-        <h1 class="font-oswald">Selamat kembali,</h1>
-        <h2 class="font-oswald" style="margin-top: -20px;">Pengguna yang dihormati</h2>
+        <h1 class="font-barlowcondensed">Selamat kembali,</h1>
+        <h2 class="font-barlowcondensed" style="margin-top: -20px;">Pengguna yang dihormati</h2>
 
         <?php if (!empty($error)): ?>
             <div class="error-box">
@@ -210,7 +210,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
     <div class="signup-overlay" id="signup-form" style="display: <?= $show_signup ? 'flex' : 'none' ?>;">
         <div class="signup-container">
-            <div class="form-header font-oswald" style="font-size: 40px;">
+            <div class="form-header font-barlowcondensed" style="font-size: 40px;">
                 <span>Daftar Akaun Baharu</span>
                 <svg class="icons" id="minimizeicon">
                     <use href="../public/icons.svg#minimize-icon"></use>

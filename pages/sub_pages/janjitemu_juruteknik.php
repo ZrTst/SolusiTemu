@@ -20,7 +20,7 @@ $SelfAppointment = db_getSelfAppointment($pdo, $userId);
 <div class="appointment-container">
     <!-- Header area -->
     <div class="banner-container">
-        <h1 class="font-oswald" style="margin: 0px;">Temu Janji yang ditetapkan</h1>
+        <h1 class="font-barlowcondensed" style="margin: 0px;">Temu Janji yang ditetapkan</h1>
         <svg class="icons">
             <use href="../public/icons.svg#history-icon"></use>
         </svg>

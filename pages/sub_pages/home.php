@@ -25,19 +25,19 @@ $targetPage = $pages[$role] ?? 'janjitemu_pelanggan';
         <div class="logo-image"></div>
         <span class="logo-text">Sistem JanjiTemu Syarikat SolusiTemu</span>
     </div>
-    <h1 style="font-family: 'Oswald', sans-serif;letter-spacing: 0.05em;">Selamat datang ke SolusiTemu</h1>
+    <h1 style=" font-family: 'Barlow Condensed', sans-serif;letter-spacing: 0.05em;">Selamat datang ke SolusiTemu</h1>
     <?php if ($role === 'admin'): ?>
-            <h3 style="width: 100%;word-break: break-word;">
-                Panel kawalan pentadbir untuk mengurus pengguna, perkhidmatan, dan memantau prestasi sistem.
-            </h3>
+        <h3 style="width: 100%;word-break: break-word;">
+            Panel kawalan pentadbir untuk mengurus pengguna, perkhidmatan, dan memantau prestasi sistem.
+        </h3>
     <?php elseif ($role === 'juruteknik'): ?>
-            <h3 style="width: 100%;word-break: break-word;">Hab tugasan anda untuk mengurus jadual, menjejak tempahan, dan
-                meningkatkan prestasi kerja anda dengan mudah.</h3>
-            </a>
+        <h3 style="width: 100%;word-break: break-word;">Hab tugasan anda untuk mengurus jadual, menjejak tempahan, dan
+            meningkatkan prestasi kerja anda dengan mudah.</h3>
+        </a>
     <?php else: ?>
-            <h3 style="width: 100%;word-break: break-word;">
-                Urus dan semak janji temu anda dengan mudah di sini.
-            </h3>
+        <h3 style="width: 100%;word-break: break-word;">
+            Urus dan semak janji temu anda dengan mudah di sini.
+        </h3>
     <?php endif; ?>
     <a href="dashboard.php?page=<?= $targetPage ?>" style="text-decoration: none">
         <button class="btn">Mula Sekarang</button>

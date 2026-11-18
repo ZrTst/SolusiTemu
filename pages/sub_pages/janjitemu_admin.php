@@ -19,7 +19,7 @@ $allAppointment = db_getAllAppointment($pdo);
 <div class="appointment-container">
     <!-- Header area -->
     <div class="banner-container">
-        <h1 class="font-oswald" style="margin: 0px;">Senarai JanjiTemu</h1>
+        <h1 class="font-barlowcondensed" style="margin: 0px;">Senarai JanjiTemu</h1>
         <svg class="icons">
             <use href="../public/icons.svg#history-icon"></use>
         </svg>
@@ -64,5 +64,12 @@ $allAppointment = db_getAllAppointment($pdo);
                 </span>
             </div>
         <?php endforeach; ?>
+        <!-- Add new user container -->
+        <div class="data-label" onclick="addUser(this)" style="display: flex;" id="add-technician">
+            <span>Tambah staff ( juruteknik / admin ) baharu</span>
+            <svg class="icons" style="width: 16px; height: 16px;">
+                <use href="../public/icons.svg#plus-icon"></use>
+            </svg>
+        </div>
     </div>
 </div>

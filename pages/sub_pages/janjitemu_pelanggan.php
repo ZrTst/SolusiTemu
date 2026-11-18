@@ -24,7 +24,7 @@ $softwareList = $allServices['software'] ?? [];
 <div class="appointment-container">
     <!-- Header area -->
     <div class="banner-container">
-        <h1 class="font-oswald" style="margin: 0px;">Borang JanjiTemu</h1>
+        <h1 class="font-barlowcondensed" style="margin: 0px;">Borang JanjiTemu</h1>
         <svg class="icons">
             <use href="../public/icons.svg#tool-icon"></use>
         </svg>
@@ -34,7 +34,7 @@ $softwareList = $allServices['software'] ?? [];
         <svg class="icons">
             <use href="../public/icons.svg#arrow-exchange-right-icon"></use>
         </svg>
-        <a href="dashboard.php?page=sejarah_janjitemu" class="font-oswald" style="margin: 0px;">Sejarah
+        <a href="dashboard.php?page=sejarah_janjitemu" class="font-barlowcondensed" style="margin: 0px;">Sejarah
             JanjiTemu</a>
     </div>
     <!-- SERVER will get status, idService, brandName, modalName, date, time by POST method -->
@@ -73,7 +73,7 @@ $softwareList = $allServices['software'] ?? [];
                     <!-- Choices -->
                     <div class="activities-container">
                         <?php foreach ($servicesList as $item): ?>
-                            <button type="button" class="activities-btn font-oswald"
+                            <button type="button" class="activities-btn font-barlowcondensed"
                                 data-id="<?= htmlspecialchars($item['idService']) ?>" onclick="selectService(this)">
                                 • <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
                             </button>
@@ -99,7 +99,7 @@ $softwareList = $allServices['software'] ?? [];
                     <!-- Choices -->
                     <div class="activities-container">
                         <?php foreach ($servicesList as $item): ?>
-                            <button type="button" class="activities-btn font-oswald"
+                            <button type="button" class="activities-btn font-barlowcondensed"
                                 data-id="<?= htmlspecialchars($item['idService']) ?>" onclick="selectService(this)">
                                 • <?= strtolower(htmlspecialchars($item['serviceActivity'])) ?>
                             </button>

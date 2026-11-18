@@ -18,13 +18,13 @@ if (
     <input type="hidden" name="status" value="importing">
     <!-- Header area -->
     <div class="banner-container">
-        <h1 class="font-spacegrotesk" style="margin: 0px;">Import Data</h1>
+        <h1 class="font-barlowcondensed" style="margin: 0px;">Import Data</h1>
         <svg class="icons">
             <use href="../public/icons.svg#import-icon"></use>
         </svg>
     </div>
     <!-- Switch customers or staffs -->
-    <div class="radio-group font-spacegrotesk">
+    <div class="radio-group font-barlowcondensed">
         <label class="radio-pill">
             <input type="radio" name="user" value="customer" checked>
             <span>Pelanggan</span>

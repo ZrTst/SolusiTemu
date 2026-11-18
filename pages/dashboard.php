@@ -31,6 +31,7 @@ $roleMenus = [
         'pages' => [
             'janjitemu_juruteknik' => ['label' => 'Janjitemu', 'file' => 'janjitemu_juruteknik.php'],
             'perkhidmatan_pengguna' => ['label' => 'Perkhidmatan', 'file' => 'perkhidmatan_pengguna.php'],
+            'juruteknik' => ['label' => 'Juruteknik', 'file' => 'juruteknik.php'],
             'profil' => ['label' => 'Profil', 'file' => 'profil.php'],
         ]
     ],
@@ -71,10 +72,10 @@ $currentRole = $roleMenus[$role] ?? $roleMenus['pelanggan'];
             </div>
         </div>
 
-        <h2 class="font-oswald">
+        <h2 class="font-barlowcondensed">
             <?= htmlspecialchars($currentRole['title']) ?>
         </h2>
-        <h2 class="font-oswald">
+        <h2 class="font-barlowcondensed">
             <?= htmlspecialchars($_SESSION['name']) ?>
         </h2>
         <div class="sidebar-vertical-btn-group">

@@ -19,7 +19,7 @@ $history_appointment = db_getHistoryAppointment($pdo, $userId);
 <div class="appointment-container">
     <!-- Header area -->
     <div class="banner-container">
-        <h1 class="font-oswald" style="margin: 0px;">Sejarah JanjiTemu</h1>
+        <h1 class="font-barlowcondensed" style="margin: 0px;">Sejarah JanjiTemu</h1>
         <svg class="icons">
             <use href="../public/icons.svg#history-icon"></use>
         </svg>
@@ -29,7 +29,7 @@ $history_appointment = db_getHistoryAppointment($pdo, $userId);
         <svg class="icons">
             <use href="../public/icons.svg#arrow-exchange-left-icon"></use>
         </svg>
-        <a href="dashboard.php?page=janjitemu_pelanggan" class="font-oswald" style="margin: 0px;">Borang
+        <a href="dashboard.php?page=janjitemu_pelanggan" class="font-barlowcondensed" style="margin: 0px;">Borang
             JanjiTemu</a>
     </div>
     <div class="history-container">

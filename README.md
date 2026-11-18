@@ -65,8 +65,8 @@ Setiap kali pengguna menghantar data borang (Form Submission), aliran data dipro
 - [x] Paparan Jadual Sejarah Janjitemu dengan kawalan hak akses data terasing (Pelanggan, Juruteknik, Admin).
 - [x] Fungsi Kelulusan & Pengagihan Janjitemu (Juruteknik, Admin).
 - [x] Operasi pentadbiran global: `delete`, `update`, `add` untuk entiti Janjitemu/Pengguna/Perkhidmatan (Admin sahaja).
-- [ ] Fungsi Import Data pukal daripada fail luaran (Admin).
-- [ ] Fungsi Output Penjanaan Laporan berformat (Admin).
+- [x] Fungsi Import Data pukal daripada fail luaran (Admin).
+- [x] Fungsi Output Penjanaan Laporan berformat (Admin).
 
 ### ❗ Fasa 4: Pengujian kerentanan dan pemulihan ralat
 - [ ] Pengujian ralat siber dan analisis kerentanan kod (Vulnerability testing: Suntikan SQL , XSS).

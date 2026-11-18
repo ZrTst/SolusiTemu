@@ -65,8 +65,8 @@ Every time a user submits form data, the data flow is processed through 3 phases
 - [x] Appointment History Table display with isolated data access rights control (Customer, Technician, Admin).
 - [x] Appointment Approval & Allocation features (Technician, Admin).
 - [x] Global administrative operations: `delete`, `update`, `add` for Appointment/User/Service entities (Admin only).
-- [ ] Bulk Data Import feature from external files (Admin).
-- [ ] Formatted Report Generation Output feature (Admin).
+- [x] Bulk Data Import feature from external files (Admin).
+- [x] Formatted Report Generation Output feature (Admin).
 
 ### ❗ Phase 4: Vulnerability Testing and Error Recovery
 - [ ] Cyber error testing and code vulnerability analysis (Vulnerability testing: SQL Injection, XSS).

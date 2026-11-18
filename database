@@ -1,33 +1,35 @@
-create table pelanggan(
-    ID_P char(4) PRIMARY KEY,
-    Nama_P varchar(50),
-    Pswd_p char(60),
-    No_Tel_P varchar(20),
-    Alamat varchar(255)
+CREATE TABLE pelanggan (
+    ID_P CHAR(4) PRIMARY KEY,
+    Nama_P VARCHAR(50),
+    Pswd_P CHAR(60),
+    No_Tel_P VARCHAR(20),
+    Alamat VARCHAR(255)
 );
 
-create table staf(
-    ID_S char(4) PRIMARY KEY,
-    Nama_S varchar(50),
-    Pswd_S char(60),
-    No_Tel_S varchar(20),
-    Peranan varchar(10),
-    Gbr_S varchar(20)
+CREATE TABLE staf (
+    ID_S CHAR(4) PRIMARY KEY,
+    Nama_S VARCHAR(50),
+    Pswd_S CHAR(60),
+    No_Tel_S VARCHAR(20),
+    Peranan VARCHAR(10),
+    Gbr_S VARCHAR(20)
 );
 
-create table perkhidmatan(
-    ID_PK char(5) PRIMARY KEY,
-    Nama_PK varchar(20)
+CREATE TABLE perkhidmatan (
+    ID_PK CHAR(5) PRIMARY KEY,
+    Nama_PK VARCHAR(20)
 );
 
-create table janjitemu (
-    ID_JT char(5) PRIMARY KEY,
-    Tarikh_Masa varchar(30),
-    Jenama varchar(10),
-    Model varchar(20),
-    'Status' varchar(20),
-    FOREIGN KEY ID_P references pelanggan(ID_P),
-    FOREIGN KEY ID_S references staf(ID_S),
-    FOREIGN KEY ID_PK references perkhidmatan(ID_PK)
+CREATE TABLE janjitemu (
+    ID_JT CHAR(5) PRIMARY KEY,
+    Tarikh_Masa VARCHAR(30),
+    Jenama VARCHAR(10),
+    Model VARCHAR(20),
+    `Status` VARCHAR(20),
+    ID_P CHAR(4),
+    ID_S CHAR(4),
+    ID_PK CHAR(5),
+    FOREIGN KEY (ID_P) REFERENCES pelanggan(ID_P),
+    FOREIGN KEY (ID_S) REFERENCES staf(ID_S),
+    FOREIGN KEY (ID_PK) REFERENCES perkhidmatan(ID_PK)
 );
-

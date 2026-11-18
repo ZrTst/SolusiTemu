@@ -24,7 +24,7 @@
     display: block;
 }
 
-.sidebar-container h2.font-oswald {
+.sidebar-container h2.font-barlowcondensed {
     display: flex;
     align-items: center;
     margin: 5px;
@@ -32,7 +32,7 @@
     color: var(--text-grey);
 }
 
-.sidebar-container h2.font-oswald:nth-of-type(2) {
+.sidebar-container h2.font-barlowcondensed:nth-of-type(2) {
     font-size: 2rem;
     color: var(--gold-bright);
     font-weight: 700;
@@ -52,11 +52,11 @@
     display: block;
     width: 100%;
     font-size: 25px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
     padding: 16px 20px;
     background: transparent;
     color: var(--text);
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     border: none;
     text-align: left;
     border-bottom: 2px solid var(--border);
@@ -100,7 +100,7 @@
 .sidebar-container .logo-text {
     display: block;
     color: var(--text);
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: bold;
     font-size: 1.2rem;
     letter-spacing: 1px;

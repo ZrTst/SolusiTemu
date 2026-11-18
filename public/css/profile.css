@@ -21,20 +21,8 @@
     padding: 15px 20px;
 }
 
-.profile-picture {
-    height: 150px;
-    width: 150px;
-    border-radius: 50%;
-    border: 2px solid var(--gold);
-    background-color: transparent;
-    background-image: url('/solusitemu/images/user_pfp.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
 .info-group {
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     padding: 10px 20px;
     font-size: 25px;
     grid-column-start: 1;

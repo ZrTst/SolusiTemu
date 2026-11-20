@@ -68,8 +68,10 @@ Setiap kali pengguna menghantar data borang (Form Submission), aliran data dipro
 - [x] Operasi pentadbiran global: `delete`, `update`, `add` untuk entiti Janjitemu/Pengguna/Perkhidmatan (Admin sahaja).
 - [x] Fungsi Import Data pukal daripada fail luaran (Admin).
 - [x] Fungsi Output Penjanaan Laporan berformat (Admin).
+- [x] Membezakan peranan dan hak 'superadmin' dan 'admin biasa' dengan teliti. 
 
 ### ❗ Fasa 4: Pengujian kerentanan dan pemulihan ralat
+- [ ] Ujian peningkatan keistimewaan mendatar dan menegak pada peringkat pengguna bagi mematuhi Kawalan Akses Berasaskan Peranan (RBAC).
 - [ ] Pengujian ralat siber dan analisis kerentanan kod (Vulnerability testing: Suntikan SQL , XSS).
 - [ ] Pengendalian ralat runtime dan pemulihan logik pangkalan data bagi memastikan sistem bebas ralat.
 

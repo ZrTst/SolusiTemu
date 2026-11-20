@@ -68,8 +68,10 @@ Every time a user submits form data, the data flow is processed through 3 phases
 - [x] Global administrative operations: `delete`, `update`, `add` for Appointment/User/Service entities (Admin only).
 - [x] Bulk Data Import feature from external files (Admin).
 - [x] Formatted Report Generation Output feature (Admin).
+- [x] Admin role permissions granulated, distinguish 'superadmin' (A001) and 'normal admin' (Another Axxx).
 
 ### ❗ Phase 4: Vulnerability Testing and Error Recovery
+- [x] User-level Horizontal and Vertical privilege escalation test in order to comply with Role-based Access Control(RBAC).
 - [ ] Cyber error testing and code vulnerability analysis (Vulnerability testing: SQL Injection, XSS).
 - [ ] Runtime error handling and database logic recovery to ensure a bug-free system.
 

@@ -9,7 +9,7 @@ if (
     ($_SESSION['role'] !== 'pelanggan' && $_SESSION['role'] !== 'juruteknik')
 ) {
     http_response_code(401);
-    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
+    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/error/401.html');
     exit;
 }
 
@@ -31,21 +31,30 @@ $dataToChange = trim($_POST['data_type'] ?? '');
 $is_staff = isset($user['ID_S']);
 ?>
 
-<!-- SERVER will get status(L23), data_type(L28), data_change(L88) by POST method -->
-<form class="profile-container" id="profile-container" method="POST" action="api/update_profile.php">
+<!-- SERVER will get status, data_type, data_change by POST method -->
+<form class="profile-container" id="profile-container" method="POST" action="api/update_profile.php"
+    enctype="multipart/form-data">
     <input type="hidden" name="status" value="editing-profile">
-    <div class="profile-picture-container">
-        <div class="photo-container">
-            <?php if ($is_staff === true):
-                $pfp_src = !empty($pfp) ? '../images/uploads/' . htmlspecialchars($pfp) : '../images/user_pfp.jpeg';
-                ?>
-                <img class="profile-picture" src="<?= htmlspecialchars($pfp_src) ?>"
-                    alt="<?= htmlspecialchars($user['ID_S'] ?? '') ?>">
-            <?php elseif ($is_staff === false): ?>
-                <img src='../images/user_pfp.jpeg' class="profile-picture">
-            <?php endif; ?>
+    <?php if ($is_staff === true):
+        $pfp_src = ($is_staff && !empty($user['Gbr_S'])) ? '../images/uploads/' . htmlspecialchars($user['Gbr_S']) : '../images/user_pfp.jpeg';
+        ?>
+        <div class="profile-picture-container">
+            <div class="avatar-container">
+                <img src='<?= htmlspecialchars($pfp_src) ?>' class="profile-picture">
+                <label title="Tukar gambar profil baharu">
+                    <input type="file" style="display: none;" name="file" onchange="uploadPfp(this)"
+                        accept="image/jpeg, image/png"><!-- function at here -->
+                    <svg class="icons">
+                        <use href="../public/icons.svg#camera-icon"></use>
+                    </svg>
+                </label>
+            </div>
         </div>
-    </div>
+    <?php elseif ($is_staff === false): ?>
+        <div class="profile-picture-container">
+            <img src='../images/user_pfp.jpeg' class="profile-picture">
+        </div>
+    <?php endif; ?>
     <!-- Hidden field -->
     <input type="hidden" id="data-type" name="data_type" value="">
     <!-- User ID -->
@@ -236,4 +245,26 @@ $is_staff = isset($user['ID_S']);
         });
     }
 
+    const form = document.querySelector('form.profile-container');
+    // Upload profile picture
+    function uploadPfp(input) {
+        const currentProfile = input.closest('.profile-container');
+        const errorBox = currentProfile ? currentProfile.querySelector('.error-box') : null;
+
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+
+            if (file.size > 2 * 1024 * 1024) {
+                if (errorBox) errorBox.style.display = 'inline-flex';
+                input.value = '';
+            } else {
+                if (errorBox) errorBox.style.display = 'none';
+                updateDataFormText.required = false;
+                retypePassInput.required = false;
+                dataTypeToUpdate.value = 'file';
+                dataTypeToUpdate.disabled = false;
+                form.submit();
+            }
+        }
+    }
 </script>

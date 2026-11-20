@@ -9,10 +9,11 @@ if (
     ($_SESSION['role'] !== 'admin')
 ) {
     http_response_code(401);
-    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
+    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/error/401.html');
     exit;
 }
 
+$adminId = isset($_SESSION['user_id']) ? trim($_SESSION['user_id']) : '';
 $user_list = db_getAllUser($pdo);
 $customer_list = $user_list['customer'] ?? [];
 $staff_list = $user_list['staff'] ?? [];
@@ -39,6 +40,7 @@ function generatePass(int $length): string
     return $password;
 }
 $randomPass = generatePass(8);
+$all_user_list = array_merge($customer_list, $staff_list);
 ?>
 
 <link rel="stylesheet" href="../public/css/user_management.css">
@@ -78,8 +80,11 @@ $randomPass = generatePass(8);
             </div>
             <!-- Customer list -->
             <div class="customer-container">
-                <?php foreach ($customer_list as $user): ?>
-                    <div class="data-label" data-target="<?= htmlspecialchars($user['ID_P']) ?>" onclick="selectUser(this)">
+                <?php foreach ($customer_list as $user):
+                    $phone = $user['No_Tel_P'];
+                    $bannedClass = (substr($phone, 0, 3) === '[X]') ? 'inactive' : ''; ?>
+                    <div class="data-label <?= $bannedClass ?>" data-target="<?= htmlspecialchars($user['ID_P']) ?>"
+                        onclick="selectUser(this)">
                         <span>
                             <?php echo htmlspecialchars($user['ID_P']); ?>
                         </span>
@@ -98,8 +103,11 @@ $randomPass = generatePass(8);
             </div>
             <!-- Staff list -->
             <div class="staff-container">
-                <?php foreach ($staff_list as $user): ?>
-                    <div class="data-label" data-target="<?= htmlspecialchars($user['ID_S']) ?>" onclick="selectUser(this)">
+                <?php foreach ($staff_list as $user):
+                    $phone = $user['No_Tel_S'];
+                    $bannedClass = (substr($phone, 0, 3) === '[X]') ? 'inactive' : ''; ?>
+                    <div class="data-label <?= $bannedClass ?>" data-target="<?= htmlspecialchars($user['ID_S']) ?>"
+                        onclick="selectUser(this)">
                         <span>
                             <?php echo htmlspecialchars($user['ID_S']); ?>
                         </span>
@@ -109,7 +117,7 @@ $randomPass = generatePass(8);
                     </div>
                 <?php endforeach; ?>
                 <!-- Add new user container -->
-                <div class="data-label" onclick="addUser(this)" style="display: none;" id="add-technician">
+                <div class=" data-label" onclick="addUser(this)" style="display: none;" id="add-technician">
                     <span>Tambah staff ( juruteknik / admin ) baharu</span>
                     <svg class="icons" style="width: 16px; height: 16px;">
                         <use href="../public/icons.svg#plus-icon"></use>
@@ -126,18 +134,22 @@ $randomPass = generatePass(8);
             </div>
         </div>
         <!-- Right side profil details -->
-        <form class="user-profile" method="POST" action="api/update_profile.php">
+        <form class="user-profile" method="POST" action="api/update_profile.php" enctype="multipart/form-data">
             <input type="hidden" name="status" value="editing-profile">
             <input type="hidden" name="id" value="">
             <input type="hidden" name="data_type" value="">
             <?php
-            $all_user_list = array_merge($customer_list, $staff_list);
             // $u as $user
             foreach ($all_user_list as $index => $u):
                 $is_staff = isset($u['ID_S']);
                 $uid = $is_staff ? $u['ID_S'] : $u['ID_P'];
                 $uname = $is_staff ? $u['Nama_S'] : $u['Nama_P'];
                 $phone = $is_staff ? $u['No_Tel_S'] : $u['No_Tel_P'];
+                $isBanned = (substr($phone, 0, 3) === '[X]') ? true : false;
+                if ($isBanned === true) {
+                    $phone = preg_replace('/\[X\]/', '', $phone);
+                }
+                $uprefix = strtoupper(substr($uid, 0, 1));
                 // Displays phone numbers with the national numbering plan
                 if (trim($phone) !== '') {
                     if (substr($phone, 0, 3) === '011' || substr($phone, 0, 3) === '015') {
@@ -149,6 +161,11 @@ $randomPass = generatePass(8);
                     $displayUsePhoneNum = '';
                 }
                 $info = $is_staff ? $u['Peranan'] : $u['Alamat'];
+                $pfpEditable = (!$isBanned && ($uid === $adminId));
+                $nameEditable = (!$isBanned && ($uprefix !== 'A' || $adminId === 'A001'));
+                $passEditable = (!$isBanned && ($uprefix !== 'A' || $uid === $adminId || $adminId === 'A001'));
+                $numberEditable = (!$isBanned && ($uprefix !== 'A' || $uid === $adminId || $adminId === 'A001'));
+                $statusEditable = ($uid !== 'A001' && $uid !== $adminId && ($uprefix !== 'A' || $adminId === 'A001'));
                 ?>
                 <div class="profile-container" style="display:<?= $index === 0 ? 'grid' : 'none'; ?>;"
                     data-id-user="<?= htmlspecialchars($uid) ?>">
@@ -156,29 +173,58 @@ $randomPass = generatePass(8);
                         $pfp_src = ($is_staff && !empty($u['Gbr_S'])) ? '../images/uploads/' . htmlspecialchars($u['Gbr_S']) : '../images/user_pfp.jpeg';
                         ?>
                         <div class="profile-picture-container">
-                            <img src='<?= htmlspecialchars($pfp_src) ?>' class="profile-picture">
+                            <div class="avatar-container">
+                                <img src='<?= htmlspecialchars($pfp_src) ?>' class="profile-picture">
+                                <?php if ($pfpEditable): ?>
+                                    <label title="Tukar gambar profil baharu">
+                                        <input type="file" style="display: none;" name="file" onchange="uploadPfp(this)"
+                                            accept="image/jpeg, image/png, image.jpg"><!-- function at here -->
+                                        <svg class="icons">
+                                            <use href="../public/icons.svg#camera-icon"></use>
+                                        </svg>
+                                    </label>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     <?php elseif ($is_staff === false): ?>
                         <div class="profile-picture-container">
                             <img src='../images/user_pfp.jpeg' class="profile-picture">
                         </div>
                     <?php endif; ?>
+                    <span class="error-box" style="display: none;">
+                        File terlalu besar
+                    </span>
                     <!-- User ID -->
                     <div class="info-group">ID pengguna</div>
-                    <div class="info-group"><?= htmlspecialchars($uid) ?></div>
+                    <div class="info-group">
+                        <?= htmlspecialchars($uid) ?>
+                        <div class="status">
+                            <?php if ($isBanned === true): ?>
+                                <div class="badget inactive"></div>
+                                Nyahaktif
+                            <?php else: ?>
+                                <div class="badget active"></div>
+                                Aktif
+                            <?php endif; ?>
+                        </div>
+                    </div>
                     <!-- Username -->
                     <div class="info-group">Nama Pengguna</div>
                     <div class="info-group"><?= htmlspecialchars($uname) ?>
-                        <svg class="icons" onclick="changeInfo(this)"> <!-- function at here -->
-                            <use href="../public/icons.svg#edit-icon"></use>
-                        </svg>
+                        <?php if ($nameEditable): ?>
+                            <svg class="icons" onclick="changeInfo(this)"> <!-- function at here -->
+                                <use href="../public/icons.svg#edit-icon"></use>
+                            </svg>
+                        <?php endif; ?>
                     </div>
                     <!-- User password -->
                     <div class="info-group">Kata Laluan</div>
                     <div class="info-group">***
-                        <svg class="icons" onclick="changeInfo(this)"> <!-- function at here -->
-                            <use href="../public/icons.svg#edit-icon"></use>
-                        </svg>
+                        <?php if ($passEditable): ?>
+                            <svg class="icons" onclick="changeInfo(this)"> <!-- function at here -->
+                                <use href="../public/icons.svg#reset-icon"></use>
+                            </svg>
+                        <?php endif; ?>
                     </div>
                     <!-- User Number -->
                     <div class="info-group">Nombor Telefon</div>
@@ -190,9 +236,11 @@ $randomPass = generatePass(8);
                             echo htmlspecialchars($displayUsePhoneNum);
                         }
                         ?>
-                        <svg class="icons" onclick="changeInfo(this)"> <!-- function at here -->
-                            <use href="../public/icons.svg#edit-icon"></use>
-                        </svg>
+                        <?php if ($numberEditable): ?>
+                            <svg class="icons" onclick="changeInfo(this)"> <!-- function at here -->
+                                <use href="../public/icons.svg#edit-icon"></use>
+                            </svg>
+                        <?php endif; ?>
                     </div>
                     <!-- User information based on their role -->
                     <?php if ($is_staff === true): ?>
@@ -209,10 +257,36 @@ $randomPass = generatePass(8);
                             } else {
                                 echo htmlspecialchars($info);
                             } ?>
-                            <svg class="icons" onclick="changeInfo(this)"> <!-- function at here -->
-                                <use href="../public/icons.svg#edit-icon"></use>
-                            </svg>
+                            <?php if (!$isBanned): ?>
+                                <svg class="icons" onclick="changeInfo(this)"> <!-- function at here -->
+                                    <use href="../public/icons.svg#edit-icon"></use>
+                                </svg>
+                            <?php endif; ?>
                         </div>
+                    <?php endif; ?>
+                    <!-- Action -->
+                    <!--    Account is not A001, Account not self account, Account is not A except current acc is A001-->
+                    <?php if ($statusEditable): ?>
+                        <div class="info-group">Tindakan</div>
+                        <div class="radio-group font-barlowcondensed">
+                            <label class="radio-pill">
+                                <input type="radio" name="action" value="none">
+                                <span>None</span>
+                            </label>
+                            <?php if ($isBanned === true): ?>
+                                <label class="radio-pill">
+                                    <input type="radio" name="action" value="restore">
+                                    <span>Aktifkan Semula</span>
+                                </label>
+                            <?php elseif (!$isBanned): ?>
+                                <label class="radio-pill">
+                                    <input type="radio" name="action" value="delete">
+                                    <span>Padam Akaun</span>
+                                </label>
+                            <?php endif; ?>
+                        </div>
+                        <button type="submit" class="submit-btn action-submit-btn" style="margin-top: 10px;" disabled>Buat
+                            Tindakan</button>
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
@@ -295,6 +369,8 @@ $randomPass = generatePass(8);
         document.querySelectorAll('input[name="data_change"]').forEach(input => {
             closeInlineAdd(input);
         });
+        document.querySelectorAll('input[name="action"]').forEach(radio => radio.checked = false);
+        document.querySelectorAll('.action-submit-btn').forEach(btn => btn.disabled = true);
 
         const iconContainer = element.closest('.info-group');
         if (!iconContainer) return;
@@ -328,12 +404,25 @@ $randomPass = generatePass(8);
                 break;
         }
         idInput.value = element.closest('.profile-container').dataset.idUser;
+        let inlineBox = '';
 
-        const inlineBox = `<div class="inline-add-form"><input type="text" name="data_change" class="info-group"
-                            placeholder="Taip di sini..." autocomplete="off" required>
-                            <button type="submit" class="inline-action-btn confirm" title="Simpan">✓</button>
-                            <button type="button" class="inline-action-btn cancel" onclick="closeInlineAdd(this)"
-                                title="Batal">✕</button></div>`;
+        if (dataTypeInput.value === 'password') {
+            inlineBox = `<div class="inline-add-form">
+                                    <input type="text" name="data_change" class="info-group" value="<?= htmlspecialchars($randomPass) ?>" autocomplete="off" required readonly>
+                                    <button type="submit" class="inline-action-btn confirm" title="Simpan">✓</button>
+                                    <button type="button" class="inline-action-btn cancel" onclick="closeInlineAdd(this)" title="Batal">✕</button>
+                                    <svg class="icons" onclick="copyPass(this)">
+                                        <use href="../public/icons.svg#copy-icon"></use>
+                                    </svg>
+                                </div>`;
+        } else {
+            inlineBox = `<div class="inline-add-form">
+                                    <input type="text" name="data_change" class="info-group" placeholder="Taip di sini..." autocomplete="off" required>
+                                    <button type="submit" class="inline-action-btn confirm" title="Simpan">✓</button>
+                                    <button type="button" class="inline-action-btn cancel" onclick="closeInlineAdd(this)" title="Batal">✕</button>
+                                </div>`;
+        }
+
         iconContainer.innerHTML = inlineBox;
         iconContainer.querySelector('input[name="data_change"]').focus();
     }
@@ -367,6 +456,8 @@ $randomPass = generatePass(8);
         document.querySelectorAll('.data-label').forEach(el => el.classList.remove('active'));
         element.classList.add('active');
         disableRequired()
+        document.querySelectorAll('input[name="action"]').forEach(radio => radio.checked = false);
+        document.querySelectorAll('.action-submit-btn').forEach(btn => btn.disabled = true);
     }
 
     document.querySelector('.data-label')?.classList.add('active');
@@ -412,7 +503,7 @@ $randomPass = generatePass(8);
     const uNumber = document.querySelector('input[name="unum"]');
     const uAddress = document.querySelector('input[name="uaddress"]');
     const role = document.querySelector('select[name="role"]');
-    // Function disable required 
+    // Function disable required when editing profile
     function disableRequired() {
         status.value = 'editing-profile';
         dataType.disabled = false;
@@ -434,7 +525,7 @@ $randomPass = generatePass(8);
         uAddress.value = '';
     }
 
-    // Function enable required
+    // Function enable required when adding user
     function enableRequired(isCustomer) {
         status.value = 'adding-user';
         dataType.value = '';
@@ -461,6 +552,35 @@ $randomPass = generatePass(8);
             uAddress.value = '';
         }
     }
+
+    // Admin action (Delete user account)
+    const actionInputs = document.querySelectorAll('input[name="action"]');
+
+    actionInputs.forEach(action => {
+        action.addEventListener('change', function () {
+            const realAction = this.value;
+            const currentProfile = this.closest('.profile-container');
+            const currentActionBtn = currentProfile.querySelector('.action-submit-btn');
+            document.querySelectorAll('input[name="data_change"]').forEach(input => {
+                closeInlineAdd(input);
+            });
+            if (realAction === 'delete' || realAction === 'restore') {
+                disableRequired();
+                idUser.disabled = false;
+                idUser.value = currentProfile.dataset.idUser;
+                dataType.value = '';
+                dataType.disabled = true;
+
+                if (currentActionBtn) currentActionBtn.disabled = false;
+            } else if (realAction === 'none') {
+                if (currentActionBtn) currentActionBtn.disabled = true;
+                dataType.disabled = true;
+                idUser.value = currentProfile.dataset.idUser;
+            } else {
+                if (currentActionBtn) currentActionBtn.disabled = true;
+            }
+        });
+    });
 
     // Copy temporary password
     function copyPass(element) {
@@ -523,4 +643,27 @@ $randomPass = generatePass(8);
         });
     }
 
+    const form = document.querySelector('form.user-profile');
+    // Upload profile picture
+    function uploadPfp(input) {
+        const currentProfile = input.closest('.profile-container');
+        const errorBox = currentProfile ? currentProfile.querySelector('.error-box') : null;
+
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+
+            if (file.size > 2 * 1024 * 1024) {
+                if (errorBox) errorBox.style.display = 'inline-flex';
+                input.value = '';
+            } else {
+                if (errorBox) errorBox.style.display = 'none';
+                disableRequired();
+                idUser.disabled = false;
+                idUser.value = currentProfile.dataset.idUser;
+                dataType.value = 'file';
+                dataType.disabled = false;
+                form.submit();
+            }
+        }
+    }
 </script>

@@ -14,19 +14,20 @@ function db_getUserById($pdo, $id)
 
     //Match the prefix with corresponding table
     if ($prefix === 'P') {
-        $tablename = 'PELANGGAN';
+        $tablename = 'pelanggan';
         $idtype = 'ID_P';
+        $numColumn = 'No_Tel_P';
     } elseif ($prefix === 'J' || $prefix === 'A') {
-        $tablename = 'STAF';
+        $tablename = 'staf';
         $idtype = 'ID_S';
+        $numColumn = 'No_Tel_S';
     } else {
-        return false; //Prevent invalid input
+        return false; // prevent invalid input
     }
 
     //Get info from table 
     try {
-
-        $sql = "SELECT * FROM `{$tablename}` WHERE `{$idtype}`= ?";
+        $sql = "SELECT * FROM `{$tablename}` WHERE `{$idtype}` = ? AND IFNULL(`{$numColumn}`, '') NOT LIKE '[X]%'";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch();
@@ -52,15 +53,15 @@ function db_getUserByName($pdo, $name)
                     `ID_P`, `Nama_P`, `Pswd_P`, `No_Tel_P`, `Alamat`, 
                     NULL AS `ID_S`, NULL AS `Nama_S`, NULL AS `Pswd_S`, NULL AS `No_Tel_S`, NULL AS `Peranan`, NULL AS `Gbr_S`,
                     'pelanggan' AS `peranan`
-                FROM `PELANGGAN` 
-                WHERE `Nama_P` = ?
+                FROM `pelanggan` 
+                WHERE `Nama_P` = ? AND IFNULL(`No_Tel_P`, '') NOT LIKE '[X]%'
                 UNION ALL
                 SELECT 
                     NULL AS `ID_P`, NULL AS `Nama_P`, NULL AS `Pswd_P`, NULL AS `No_Tel_P`, NULL AS `Alamat`, 
                     `ID_S`, `Nama_S`, `Pswd_S`, `No_Tel_S`, `Peranan`, `Gbr_S`,
                     `Peranan` AS `peranan`
-                FROM `STAF` 
-                WHERE `Nama_S` = ?";
+                FROM `staf` 
+                WHERE `Nama_S` = ? AND IFNULL(`No_Tel_S`, '') NOT LIKE '[X]%'";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$name, $name]);
         return $stmt->fetch();
@@ -361,6 +362,7 @@ function db_getAvailableTechnicians($pdo, $timeDate)
         $sql = "SELECT s.ID_S, s.Nama_S, s.No_Tel_S, s.Gbr_S 
                 FROM staf s 
                 WHERE s.Peranan = 'juruteknik' 
+                AND IFNULL(s.No_Tel_S, '') NOT LIKE '[X]%'
                 AND NOT EXISTS (
                     SELECT 1 FROM janjitemu jt 
                     WHERE jt.ID_S = s.ID_S AND jt.Tarikh_Masa = ?
@@ -492,23 +494,36 @@ function db_getAllUser($pdo)
 {
     try {
         // Customers'
-        $stmtCustomer = $pdo->query('
-        SELECT ID_P, Nama_P, No_Tel_P, Alamat 
-        FROM pelanggan 
-        WHERE No_Tel_P NOT LIKE "[X]%"');
+        $sqlCustomer = "SELECT `ID_P`, `Nama_P`, `No_Tel_P`, `Alamat` FROM `pelanggan` 
+                        ORDER BY 
+                            CASE
+                                WHEN `No_Tel_P` LIKE '[X]%' THEN 1
+                                ELSE 0
+                                END 
+                                ASC,
+                                `ID_P` ASC";
+        $stmtCustomer = $pdo->query($sqlCustomer);
         $customers = $stmtCustomer->fetchAll();
 
         // Staffs'
-        $stmtStaff = $pdo->query('
-        SELECT ID_S, Nama_S, No_Tel_S, Peranan, Gbr_S
-        FROM staf
-        WHERE No_Tel_S NOT LIKE "[X]%"');
+        $sqlStaff = "SELECT `ID_S`, `Nama_S`, `No_Tel_S`, `Peranan`, `Gbr_S` FROM `staf`  
+                    ORDER BY  
+                        CASE
+                            WHEN `No_Tel_S` LIKE '[X]%' THEN 1
+                            ELSE 0
+                            END 
+                            ASC,
+                            `ID_S` ASC";
+        $stmtStaff = $pdo->query($sqlStaff);
         $staffs = $stmtStaff->fetchAll();
 
-        return [
+
+        $users = [
             'customer' => $customers,
             'staff' => $staffs
         ];
+
+        return $users;
     } catch (PDOException $e) {
         error_log("Database query failed in db_getAllUser: " . $e->getMessage());
         return 'error';
@@ -580,6 +595,47 @@ function db_addUser($pdo, $uName, $uPass, $uNum, $info, $uType)
             $pdo->rollBack(); // Undo operation
         }
         error_log("Fail insert data into database at db_addUser: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Function to change user status
+function db_changeUserStatus($pdo, $userId, $action)
+{
+    $userId = isset($userId) ? trim($userId) : '';
+    $action = isset($action) ? trim($action) : '';
+    $prefix = strtoupper(substr($userId, 0, 1));
+
+    if ($prefix === 'P') {
+        $tablename = 'pelanggan';
+        $idtype = 'ID_P';
+        $numColumn = 'No_Tel_P';
+    } elseif ($prefix === 'J' || $prefix === 'A') {
+        $tablename = 'staf';
+        $idtype = 'ID_S';
+        $numColumn = 'No_Tel_S';
+    } else {
+        return false; //Prevent invalid input
+    }
+    if (!in_array($action, ['restore', 'delete'], true)) {
+        return false;
+    }
+    try {
+        if ($action === 'delete') {
+            $sql = "UPDATE `{$tablename}` SET `{$numColumn}` = CONCAT('[X]', IFNULL(`{$numColumn}`, '')) WHERE `{$idtype}` = ? AND IFNULL(`{$numColumn}`, '') NOT LIKE '[X]%'";
+            $stmt = $pdo->prepare($sql);
+            $success = $stmt->execute([$userId]);
+        } elseif ($action === 'restore') {
+            $sql = "UPDATE `{$tablename}` SET `{$numColumn}` = REPLACE(`{$numColumn}`,'[X]', '') WHERE `{$idtype}` = ? AND 
+            `{$numColumn}` LIKE '[X]%'";
+            $stmt = $pdo->prepare($sql);
+            $success = $stmt->execute([$userId]);
+        } else {
+            return false;
+        }
+        return $success;
+    } catch (PDOException $e) {
+        error_log("Fail insert data into database at db_changeUserStatus " . $e->getMessage());
         return false;
     }
 }

@@ -83,12 +83,6 @@
         outline: none;
         transition: all 0.25s ease;
 
-        &:hover,
-        &:focus {
-            background: rgba(0, 0, 0, 0.45);
-            box-shadow: 0 0 10px color-mix(in srgb, var(--gold-bright) 40%, transparent);
-        }
-
         &::-webkit-calendar-picker-indicator {
             cursor: pointer;
             width: 20px;

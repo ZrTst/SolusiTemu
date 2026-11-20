@@ -91,12 +91,7 @@
     color: var(--gold-bright);
 }
 
-.submit-btn:disabled {
-    cursor: not-allowed !important;
-    opacity: 0.6;
-    transform: none !important;
-    box-shadow: none !important;
-}
+
 
 /* Overflow Slider */
 .import-container::-webkit-scrollbar {

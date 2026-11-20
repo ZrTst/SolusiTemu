@@ -221,6 +221,13 @@ button.submit-btn:active {
     transform: translateY(1px);
 }
 
+.submit-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.6;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
 .notice {
     grid-column: 1/-1;
     display: flex;
@@ -362,6 +369,31 @@ button.submit-btn:active {
     }
 }
 
+.status {
+    display: flex;
+    height: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: fit-content;
+    gap: 10px;
+}
+
+.badget {
+    display: flex;
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+
+    &.active {
+        background: var(--gold);
+    }
+
+    &.inactive {
+        background: var(--gold-dim);
+    }
+}
+
 /** For mobile view*/
 @media (max-width: 768px) {
     .hero-section-container {
@@ -399,5 +431,4 @@ button.submit-btn:active {
     .sidebar-container .logo-text {
         display: flex !important;
     }
-
 }

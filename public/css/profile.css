@@ -44,6 +44,24 @@
     background-color: transparent;
 }
 
+
+.avatar-container {
+    position: relative;
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    background-color: transparent;
+
+    .icons {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        right: 0%;
+        bottom: 0%;
+    }
+}
+
 /* User input area to change data */
 .change-data-overlay {
     display: flex;

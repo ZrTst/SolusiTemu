@@ -41,6 +41,7 @@
 
 .staff-container .data-label,
 .customer-container .data-label {
+    position: relative;
     grid-column: span 1;
     display: grid;
     grid-template-columns: 1fr 2fr;
@@ -51,6 +52,9 @@
     border: 1px solid transparent;
     cursor: pointer;
     transition: transform 0.3s ease;
+    font-family: 'Oswald', sans-serif;
+    font-size: 17px;
+    letter-spacing: 0.03em;
 
     &:last-child {
         display: flex;
@@ -68,10 +72,18 @@
         transition: all 0.25s ease;
     }
 
-    & .icons {
-        transition: transform 0.3s ease;
+    &.inactive {
+        opacity: 0.5;
+
+        & span {
+            text-decoration: line-through;
+            text-decoration-color: var(--gold);
+            text-decoration-thickness: 2px;
+            text-decoration-style: solid;
+        }
     }
 }
+
 
 .staff-container .data-label:nth-of-type(even),
 .customer-container .data-label:nth-of-type(even) {
@@ -88,11 +100,6 @@
     color: var(--gold-bright);
     transform: translateX(6px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-
-    & .icons {
-        color: var(--icon-active);
-        transform: rotate(90deg);
-    }
 }
 
 .user-profile {
@@ -129,7 +136,6 @@
         justify-content: space-between;
         padding-right: 20px;
     }
-
 }
 
 .profile-picture-container {
@@ -141,12 +147,30 @@
     padding: 15px 20px;
 }
 
+.avatar-container {
+    position: relative;
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    background-color: transparent;
+
+    .icons {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        right: 0%;
+        bottom: 0%;
+    }
+}
+
 .inline-add-form {
     display: inline-flex;
     align-items: center;
     cursor: pointer;
     font-size: 25px;
     animation: expand 0.2s ease-out;
+    justify-content: space-between;
 
     input.info-group {
         border: none !important;
@@ -155,7 +179,6 @@
         padding: 0px !important;
         margin: 0 !important;
     }
-
 }
 
 .role-select {

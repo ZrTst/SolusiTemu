@@ -291,13 +291,6 @@
     grid-column: span 2;
 }
 
-.submit-btn:disabled {
-    cursor: not-allowed !important;
-    opacity: 0.6;
-    transform: none !important;
-    box-shadow: none !important;
-}
-
 /* Choose technicians page */
 .technicans-container {
     grid-column: span 2;

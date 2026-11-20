@@ -12,7 +12,7 @@ if (
     $_SESSION['logged_in'] !== true
 ) {
     http_response_code(401);
-    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
+    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/error/401.html');
     exit;
 }
 require_once __DIR__ . '/../../private_core/config.php';

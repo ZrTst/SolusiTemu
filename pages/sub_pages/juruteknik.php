@@ -8,7 +8,7 @@ if (
     ($_SESSION['role'] !== 'juruteknik')
 ) {
     http_response_code(401);
-    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
+    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/error/401.html');
     exit;
 }
 $availableTechnicians = db_getAvailableTechnicians($pdo, '1970-9-20 15:30');
@@ -53,7 +53,7 @@ if (!$availableTechnicians || !is_array($availableTechnicians)) {
                         <?= htmlspecialchars($technician['Nama_S'] ?? '') ?>
                     </div>
                     <div class="info label">Nombor Telefon juruteknik: </div>
-                    <div class="data label"><?= htmlspecialchars($displayUsePhoneNum ?? '') ?></div>
+                    <div class="data label"><?= htmlspecialchars($displayUsePhoneNum ?? '-') ?></div>
                 </div>
 
             </div>

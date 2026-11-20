@@ -8,7 +8,7 @@ if (
     ($_SESSION['role'] !== 'pelanggan')
 ) {
     http_response_code(401);
-    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
+    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/error/401.html');
     exit;
 }
 
@@ -71,7 +71,7 @@ if (!$availableTechnicians || !is_array($availableTechnicians)) {
                             <?= htmlspecialchars($technician['Nama_S'] ?? '') ?>
                         </div>
                         <div class="info label">Nombor Telefon juruteknik: </div>
-                        <div class="data label"><?= htmlspecialchars($displayUsePhoneNum ?? '') ?></div>
+                        <div class="data label"><?= htmlspecialchars($displayUsePhoneNum ?? '-') ?></div>
                     </div>
                     <button class="choose label" type="button" onclick="selectTechnican(this)">Pilih</button>
                 </div>

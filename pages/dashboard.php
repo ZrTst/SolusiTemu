@@ -6,7 +6,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     //For someone who haven't login and unauthorized 
     http_response_code(401);
     //Pull the page 401.html without changing URL
-    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
+    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/error/401.html');
     exit;
 }
 require_once __DIR__ . '/../private_core/config.php';

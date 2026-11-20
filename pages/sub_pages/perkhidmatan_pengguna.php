@@ -9,7 +9,7 @@ if (
     ($_SESSION['role'] !== 'pelanggan' && $_SESSION['role'] !== 'juruteknik')
 ) {
     http_response_code(401);
-    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
+    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/error/401.html');
     exit;
 }
 

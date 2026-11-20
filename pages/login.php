@@ -19,7 +19,7 @@ $userid_3 = '';
 $username_input = '';
 $signup_username = isset($_POST['name-signup']) ? trim($_POST['name-signup']) : '';
 $signup_status = $_SESSION['status'] ?? null;
-// Flash session (Undifine $_SESSION['status'] to prevent status duplicate)
+// Flash session (Undefine $_SESSION['status'] to prevent status duplicate)
 unset($_SESSION['status']);
 // Only error occurs will display sign-up container
 $show_signup = in_array($signup_status, ['NameUsed', 'InvalidUsername', 'DatabaseError', 'InvalidInput', 'WeakPassword'], true);
@@ -67,6 +67,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $_SESSION['logged_in'] = true;
                 $_SESSION['role'] = ($prefix === 'P') ? 'pelanggan' : (($prefix === 'A') ? 'admin' : 'juruteknik');
                 $_SESSION['name'] = $user['Nama_P'] ?? $user['Nama_S'] ?? '';
+                unset($user['Pswd_S']);
+                unset($user['Pswd_P']);
                 $_SESSION['user_data'] = $user;
 
                 // Page after login successfully
@@ -236,7 +238,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 <!--Password container-->
                 <label class="label">Kata Laluan</label>
                 <input class="global-input" type="password" id="password-signup" name="password-signup"
-                    placeholder="Minima 8 aksara" required>
+                    placeholder="Minima 8 aksara" required minlength="8">
                 <div id="weak-pass-error" class="error-box" style="display: none;">Kata laluan mesti mengandungi huruf
                     besar, huruf kecil,
                     nombor dan minima 8 aksara.

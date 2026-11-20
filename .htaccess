@@ -1,14 +1,14 @@
 # When 400 error occur(Bad requests)
-ErrorDocument 400 /SolusiTemu/pages/errors/400.html
+ErrorDocument 400 /SolusiTemu/pages/error/400.html
 
 # When 401 error occur(Unauthorized)
-ErrorDocument 401 /SolusiTemu/pages/errors/401.html
+ErrorDocument 401 /SolusiTemu/pages/error/401.html
 
 # When 403 error occur(Forbidden)
-ErrorDocument 403 /SolusiTemu/pages/errors/403.html
+ErrorDocument 403 /SolusiTemu/pages/error/403.html
 
 # When 404 error occur(Not found)
-ErrorDocument 404 /SolusiTemu/pages/errors/404.html
+ErrorDocument 404 /SolusiTemu/pages/error/404.html
 
 # Prevent indexes view
 Options -Indexes

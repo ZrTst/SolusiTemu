@@ -13,7 +13,7 @@ if (
 ) {
     http_response_code(401);
     //Pull the page 401.html without changing URL
-    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/errors/401.html');
+    include($_SERVER['DOCUMENT_ROOT'] . '/SolusiTemu/pages/error/401.html');
     exit;
 }
 require_once __DIR__ . '/../../private_core/config.php';
@@ -36,6 +36,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $userId = isset($_SESSION['user_id']) ? trim($_SESSION['user_id']) : '';
     $dataChange = isset($_POST['data_change']) ? trim($_POST['data_change']) : '';
     $role = isset($_SESSION['role']) ? trim($_SESSION['role']) : '';
+    $action = isset($_POST['action']) ? trim($_POST['action']) : '';
 
     $prefix = strtoupper(substr($userId, 0, 1));
 
@@ -47,6 +48,147 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
     if ($status === 'editing-profile') {
         $userIdEdit = isset($_POST['id']) ? trim($_POST['id']) : '';
+        $prefixEdit = strtoupper(substr($userIdEdit, 0, 1));
+        // Delete user
+        if ($action !== '' && $prefix === 'A') {
+            if (
+                ($action === 'delete' || $action === 'restore') && $userIdEdit !== 'A001'
+            ) {
+                if (empty($userIdEdit)) {
+                    $redirectWithStatusAdmin('invalid');
+                }
+                $response = db_changeUserStatus($pdo, $userIdEdit, $action);
+                if ($response === true) {
+                    $redirectWithStatusAdmin('success');
+                } else {
+                    $redirectWithStatusAdmin('failed');
+                }
+            } else {
+                $redirectWithStatusAdmin('invalid');
+            }
+        }
+
+        // Profile picture upload
+        if ($data_type === 'file') {
+            if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+                if ($prefix === 'A') {
+                    $redirectWithStatusAdmin('upload_error');
+                }
+                $redirectWithStatus('upload_error');
+            }
+            if ($prefix !== 'J' && $prefix !== 'A') {
+                $redirectWithStatus('invalid');
+            }
+            if ($prefix === 'A' && empty($userIdEdit)) {
+                $redirectWithStatusAdmin('invalid');
+            }
+            $fileSize = (int) ($_FILES['file']['size'] ?? 0);
+            $maxSize = 2 * 1024 * 1024; // 2MB
+
+            if ($fileSize <= 0 || $fileSize > $maxSize) {
+                if ($prefix === 'A') {
+                    $redirectWithStatusAdmin('file_too_large');
+                }
+                $redirectWithStatus('file_too_large');
+            }
+
+            // Allowed file type
+            $allowedExts = ['png', 'jpeg', 'jpg'];
+            $allowedMimes = [
+                'image/png',
+                'image/x-png',
+                'image/jpeg',
+                'image/jpg',
+                'image/pjpeg',
+            ];
+
+            // File extension .jpg .jpeg .png
+            $ext = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mime = $finfo->file($_FILES['file']['tmp_name']);
+
+            if (!in_array($ext, $allowedExts, true) || !in_array($mime, $allowedMimes, true)) {
+                if ($prefix === 'A') {
+                    $redirectWithStatusAdmin('invalid_mime');
+                }
+                $redirectWithStatus('invalid');
+            }
+
+            $filePath = $_FILES['file']['tmp_name'];
+            // Read binary, rb
+            $handle = fopen($filePath, 'rb');
+
+            if ($handle === false) {
+                if ($prefix === 'A') {
+                    $redirectWithStatusAdmin('upload_error');
+                }
+                $redirectWithStatus('upload_error');
+            }
+
+            $header = fread($handle, 8);
+            fclose($handle);
+
+            $isPng = ($header === "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A");
+            $isJpeg = (strncmp($header, "\xFF\xD8\xFF", 3) === 0);
+
+            if ((!$isPng && !$isJpeg) || ($ext === 'png' && !$isPng) || ($ext !== 'png' && !$isJpeg)) {
+                if ($prefix === 'A') {
+                    $redirectWithStatusAdmin('invalid');
+                }
+                $redirectWithStatus('invalid');
+            }
+
+            $newFileName = bin2hex(random_bytes(16)) . '.' . ($isPng ? 'png' : 'jpeg');
+            $folder = '../../images/uploads/' . $newFileName;
+
+            if ($isPng) {
+                $img = @imagecreatefrompng($filePath);
+                if (!$img) {
+                    if ($prefix === 'A') {
+                        $redirectWithStatusAdmin('png_file_error');
+                    }
+                    $redirectWithStatus('png_file_error');
+                }
+                imagealphablending($img, false);
+                imagesavealpha($img, true);
+                imagepng($img, $folder, 6);
+            } else {
+                $img = @imagecreatefromjpeg($filePath);
+                if (!$img) {
+                    if ($prefix === 'A') {
+                        $redirectWithStatusAdmin('jpeg_file_error');
+                    }
+                    $redirectWithStatus('jpeg_file_error');
+                }
+                imagejpeg($img, $folder, 90);
+            }
+            imagedestroy($img);
+
+            if ($prefix === 'A') {
+                $response = db_updateData($pdo, $userIdEdit, 'Gbr_S', $newFileName);
+            } else {
+                $response = db_updateData($pdo, $userId, 'Gbr_S', $newFileName);
+            }
+
+            if ($response === true) {
+                if ($prefix !== 'A' || $userId === $userIdEdit) {
+                    $user = db_getUserById($pdo, $userId);
+                    unset($user['Pswd_S']);
+                    unset($user['Pswd_P']);
+                    $_SESSION['user_data'] = $user;
+                }
+                if ($prefix === 'A') {
+                    $redirectWithStatusAdmin('success');
+                }
+                $redirectWithStatus('success');
+            } else {
+                if ($prefix === 'A') {
+                    $redirectWithStatusAdmin('failed');
+                }
+                $redirectWithStatus('failed');
+            }
+        }
+
 
         // Check validation of inputs
         if (empty($data_type) || empty($userId) || empty($dataChange) || ($prefix === 'A' && empty($userIdEdit))) {
@@ -99,7 +241,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         }
 
         $db_column = '';
-        $prefixEdit = strtoupper(substr($userIdEdit, 0, 1));
 
         if ($role === 'juruteknik' || ($prefix === 'A' && ($prefixEdit === 'J' || $prefixEdit === 'A'))) {
             switch ($data_type) {
@@ -157,6 +298,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 if ($db_column === 'Nama_P' || $db_column === 'Nama_S') {
                     $_SESSION['name'] = $user['Nama_P'] ?? $user['Nama_S'] ?? '';
                 }
+                unset($user['Pswd_S']);
+                unset($user['Pswd_P']);
                 $_SESSION['user_data'] = $user;
             }
             if ($prefix === 'A') {
